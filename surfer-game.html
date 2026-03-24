@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surfer Runner</title>
+<link rel="icon" type="image/png" href="Website_Image/favicon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    margin: 0;
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
+</head>
+<body>
+<canvas id="game" width="1340" height="300"></canvas>
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width;
+const H = canvas.height;
+
+/* ── Warm portfolio palette ─────────────────────── */
+const COL_DARK    = '#2C2C2C';
+const COL_LIGHT   = '#e2dbd0';
+const COL_BG      = '#ffffff';
+const COL_SURFACE = '#f2ede6';
+const COL_TEXT_2  = '#6b6b6b';
+const COL_BORDER  = '#e8e5e1';
+
+/* ── constants ──────────────────────────────────── */
+const GROUND_Y        = 226;
+const GRAVITY          = 0.58;
+const JUMP_FORCE       = -11.5;
+const FAST_FALL        = 12;
+const INITIAL_SPEED    = 6;
+const MAX_SPEED        = 11;
+const SPEED_INCREMENT  = 0.0006;
+const GOAL_DISTANCE    = 10000;
+
+/* ── game state ─────────────────────────────────── */
+let state      = 'IDLE';
+let speed      = INITIAL_SPEED;
+let distance   = 0;
+let highScore  = 0;
+let frame      = 0;
+
+/* ── scrolling offsets ──────────────────────────── */
+let groundOffset = 0;
+let cloudOffset  = 0;
+
+/* ── player ─────────────────────────────────────── */
+const player = {
+  x: 130,
+  y: GROUND_Y,
+  w: 44,  h: 52,
+  dw: 58, dh: 30,
+  vy: 0,
+  jumping: false,
+  ducking: false,
+  runFrame: 0,
+  runTimer: 0,
+  get cw()   { return this.ducking ? this.dw : this.w; },
+  get ch()   { return this.ducking ? this.dh : this.h; },
+  get top()  { return this.y - this.ch; },
+};
+
+/* ── obstacles ──────────────────────────────────── */
+let obstacles   = [];
+let spawnTimer  = 0;
+let nextSpawn   = 60;
+
+function spawnObstacle() {
+  const canAerial = distance > 100;
+  const isAerial  = canAerial && Math.random() < 0.2;
+
+  if (isAerial) {
+    const h = 26;
+    const y = GROUND_Y - 60 - Math.random() * 15;
+    obstacles.push({
+      type: 'aerial',
+      x: W + 20,
+      y: y, w: 46, h: h,
+      wingFrame: 0, wingTimer: 0,
+    });
+  } else {
+    const variant = Math.random();
+    let w, h;
+    if (variant < 0.4) {
+      w = 20; h = 34;
+    } else if (variant < 0.75) {
+      w = 28; h = 42;
+    } else {
+      w = 44 + Math.random() * 16; h = 36 + Math.random() * 10;
+    }
+    obstacles.push({
+      type: 'ground',
+      x: W + 20,
+      y: GROUND_Y - h,
+      w: w, h: h,
+    });
+  }
+}
+
+/* ── collision ──────────────────────────────────── */
+function collides(a, b) {
+  const m = 6;
+  return (
+    a.x + m        < b.x + b.w - m &&
+    a.x + a.cw - m > b.x + m       &&
+    a.top + m       < b.y + b.h - m &&
+    a.top + a.ch - m > b.y + m
+  );
+}
+
+/* ── reset ──────────────────────────────────────── */
+function reset() {
+  speed      = INITIAL_SPEED;
+  distance   = 0;
+  frame      = 0;
+  obstacles  = [];
+  spawnTimer = 0;
+  nextSpawn  = 60;
+  player.y        = GROUND_Y;
+  player.vy       = 0;
+  player.jumping  = false;
+  player.ducking  = false;
+  player.runFrame = 0;
+  player.runTimer = 0;
+}
+
+/* ── input ──────────────────────────────────────── */
+function tryJump() {
+  if (!player.jumping) {
+    player.vy      = JUMP_FORCE;
+    player.jumping = true;
+    player.ducking = false;
+  }
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.code === 'ArrowUp') {
+    e.preventDefault();
+    if (state === 'IDLE')           { reset(); state = 'PLAYING'; }
+    else if (state === 'GAME_OVER' || state === 'WIN') { reset(); state = 'PLAYING'; }
+    else if (state === 'PLAYING')   { tryJump(); }
+  }
+  if (e.code === 'ArrowDown' && state === 'PLAYING') {
+    e.preventDefault();
+    if (player.jumping) player.vy = FAST_FALL;
+    player.ducking = true;
+  }
+});
+
+document.addEventListener('keyup', e => {
+  if (e.code === 'ArrowDown') player.ducking = false;
+});
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault();
+  if (state === 'IDLE')           { reset(); state = 'PLAYING'; }
+  else if (state === 'GAME_OVER' || state === 'WIN') { reset(); state = 'PLAYING'; }
+  else if (state === 'PLAYING')   { tryJump(); }
+}, { passive: false });
+
+/* ── update ─────────────────────────────────────── */
+function update() {
+  if (state !== 'PLAYING') return;
+
+  frame++;
+  speed    = Math.min(MAX_SPEED, INITIAL_SPEED + frame * SPEED_INCREMENT);
+  distance += speed * 0.1;
+
+  groundOffset += speed;
+  cloudOffset  += speed * 0.15;
+
+  // Player physics
+  if (player.jumping) {
+    player.vy += GRAVITY;
+    player.y  += player.vy;
+    if (player.y >= GROUND_Y) {
+      player.y       = GROUND_Y;
+      player.vy      = 0;
+      player.jumping = false;
+    }
+  }
+
+  // Run animation
+  player.runTimer++;
+  if (player.runTimer > (player.ducking ? 4 : 6)) {
+    player.runFrame = 1 - player.runFrame;
+    player.runTimer = 0;
+  }
+
+  // Sun animation
+  sunTimer++;
+  if (sunTimer > 15) {
+    sunFrame = (sunFrame + 1) % 32;
+    sunTimer = 0;
+  }
+
+  // Win check
+  if (distance >= GOAL_DISTANCE) {
+    distance = GOAL_DISTANCE;
+    if (distance > highScore) highScore = distance;
+    state = 'WIN';
+    return;
+  }
+
+  // Spawn obstacles (stop spawning near the finish)
+  if (distance < GOAL_DISTANCE - 500) {
+    spawnTimer++;
+    if (spawnTimer >= nextSpawn) {
+      spawnObstacle();
+      spawnTimer = 0;
+      const t = (speed - INITIAL_SPEED) / (MAX_SPEED - INITIAL_SPEED);
+      const minGap = Math.max(50, 80 - t * 25);
+      const maxGap = Math.max(80, 150 - t * 50);
+      nextSpawn = Math.floor(minGap + Math.random() * (maxGap - minGap));
+    }
+  }
+
+  // Move obstacles
+  for (let i = obstacles.length - 1; i >= 0; i--) {
+    const obs = obstacles[i];
+    obs.x -= speed;
+    if (obs.type === 'aerial') {
+      obs.wingTimer++;
+      if (obs.wingTimer > 8) {
+        obs.wingFrame = 1 - obs.wingFrame;
+        obs.wingTimer = 0;
+      }
+    }
+    if (obs.x + obs.w < -20) obstacles.splice(i, 1);
+  }
+
+  // Collision
+  for (const obs of obstacles) {
+    if (collides(player, obs)) {
+      if (distance > highScore) highScore = distance;
+      state = 'GAME_OVER';
+      return;
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   GEOMETRIC DRAWING — smooth shapes
+   ══════════════════════════════════════════════════ */
+
+function drawSurfer(x, y, ducking, jumping, runFrame) {
+  ctx.fillStyle = COL_DARK;
+  ctx.strokeStyle = COL_DARK;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  const cx = x + 22; // center x of bounding box
+
+  if (ducking) {
+    const baseY = y; // ground
+    const boardY = baseY - 6;
+    // Board (wide pill)
+    ctx.beginPath();
+    ctx.roundRect(x - 5, boardY - 4, 58, 7, 4);
+    ctx.fill();
+    // Fin
+    ctx.fillRect(x + 2, boardY + 3, 4, 5);
+    // Body (compressed ellipse)
+    ctx.beginPath();
+    ctx.ellipse(cx, boardY - 14, 18, 8, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Head
+    ctx.beginPath();
+    ctx.arc(cx + 6, boardY - 22, 6, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (jumping) {
+    const baseY = y;
+    const boardY = baseY - 2;
+    // Board
+    ctx.beginPath();
+    ctx.roundRect(x, boardY - 4, 44, 6, 3);
+    ctx.fill();
+    // Fin
+    ctx.fillRect(x + 6, boardY + 2, 4, 4);
+    // Legs tucked
+    ctx.beginPath();
+    ctx.roundRect(cx - 8, boardY - 16, 16, 10, 4);
+    ctx.fill();
+    // Torso
+    ctx.beginPath();
+    ctx.roundRect(cx - 5, boardY - 30, 10, 16, 4);
+    ctx.fill();
+    // Arms raised
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - 4, boardY - 24);
+    ctx.lineTo(cx - 14, boardY - 36);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + 4, boardY - 24);
+    ctx.lineTo(cx + 14, boardY - 36);
+    ctx.stroke();
+    // Head
+    ctx.beginPath();
+    ctx.arc(cx, boardY - 37, 7, 0, Math.PI * 2);
+    ctx.fill();
+  } else {
+    // Standing / surfing
+    const baseY = y;
+    const boardY = baseY - 4;
+    // Board
+    ctx.beginPath();
+    ctx.roundRect(x, boardY - 4, 44, 7, 4);
+    ctx.fill();
+    // Fin
+    ctx.fillRect(x + 6, boardY + 3, 4, 5);
+    // Legs
+    const legSpread = runFrame === 0 ? 10 : 7;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(cx - legSpread, boardY - 4);
+    ctx.lineTo(cx - 3, boardY - 18);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + legSpread, boardY - 4);
+    ctx.lineTo(cx + 3, boardY - 18);
+    ctx.stroke();
+    // Torso
+    ctx.beginPath();
+    ctx.roundRect(cx - 5, boardY - 34, 10, 18, 4);
+    ctx.fill();
+    // Arms
+    const armDip = runFrame === 0 ? -2 : 2;
+    ctx.beginPath();
+    ctx.moveTo(cx - 4, boardY - 28);
+    ctx.lineTo(cx - 16, boardY - 22 + armDip);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + 4, boardY - 28);
+    ctx.lineTo(cx + 16, boardY - 22 - armDip);
+    ctx.stroke();
+    // Head
+    ctx.beginPath();
+    ctx.arc(cx, boardY - 41, 7, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   WAVE — smooth bezier curl behind surfer
+   ══════════════════════════════════════════════════ */
+let waveFrame = 0;
+let waveTimer = 0;
+
+function drawWaveBehindSurfer() {
+  const waveX = player.x - 10;
+
+  // Water swell behind wave
+  ctx.fillStyle = COL_LIGHT;
+  ctx.fillRect(0, GROUND_Y - 10, waveX - 20, 10);
+
+  // Swell top curve
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND_Y - 10);
+  ctx.quadraticCurveTo(waveX / 2, GROUND_Y - 14, waveX - 20, GROUND_Y - 10);
+  ctx.lineTo(waveX - 20, GROUND_Y);
+  ctx.lineTo(0, GROUND_Y);
+  ctx.closePath();
+  ctx.fillStyle = COL_LIGHT;
+  ctx.fill();
+
+  // Barrel curl
+  ctx.beginPath();
+  ctx.moveTo(waveX - 30, GROUND_Y);
+  ctx.quadraticCurveTo(waveX - 40, GROUND_Y - 50, waveX + 5, GROUND_Y - 60);
+  ctx.quadraticCurveTo(waveX + 30, GROUND_Y - 55, waveX + 25, GROUND_Y - 35);
+  ctx.quadraticCurveTo(waveX + 15, GROUND_Y - 20, waveX - 5, GROUND_Y - 15);
+  ctx.quadraticCurveTo(waveX - 20, GROUND_Y - 5, waveX - 30, GROUND_Y);
+  ctx.closePath();
+  ctx.fillStyle = COL_LIGHT;
+  ctx.fill();
+  ctx.strokeStyle = COL_DARK;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Flow lines inside wave
+  ctx.strokeStyle = COL_BORDER;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(waveX - 25, GROUND_Y - 8);
+  ctx.quadraticCurveTo(waveX - 30, GROUND_Y - 30, waveX - 5, GROUND_Y - 42);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(waveX - 20, GROUND_Y - 5);
+  ctx.quadraticCurveTo(waveX - 25, GROUND_Y - 22, waveX - 8, GROUND_Y - 30);
+  ctx.stroke();
+
+  // Spray dots at lip
+  ctx.fillStyle = COL_LIGHT;
+  const f = waveTimer % 3;
+  ctx.beginPath();
+  ctx.arc(waveX + 28 + f * 2, GROUND_Y - 38 - f, 2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(waveX + 22 + f, GROUND_Y - 32 + f, 1.5, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(waveX + 32 - f, GROUND_Y - 42 + f, 1.5, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* ══════════════════════════════════════════════════
+   SHARK — geometric silhouette, distance-based
+   ══════════════════════════════════════════════════ */
+function drawShark(obsX, obsY, obsW, obsH) {
+  const distToPlayer = obsX - player.x;
+  const cx = obsX + obsW / 2;
+
+  if (distToPlayer > 200) {
+    // Frame 0: dorsal fin only
+    ctx.fillStyle = COL_DARK;
+    ctx.beginPath();
+    ctx.moveTo(cx, GROUND_Y - 20);
+    ctx.lineTo(cx - 8, GROUND_Y);
+    ctx.lineTo(cx + 5, GROUND_Y);
+    ctx.closePath();
+    ctx.fill();
+    // Ripples
+    ctx.fillStyle = COL_LIGHT;
+    ctx.beginPath();
+    ctx.arc(cx - 12, GROUND_Y - 1, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 10, GROUND_Y - 1, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+  } else if (distToPlayer > 120) {
+    // Frame 1: fin + back arc
+    ctx.fillStyle = COL_DARK;
+    // Dorsal fin
+    ctx.beginPath();
+    ctx.moveTo(cx, GROUND_Y - 28);
+    ctx.lineTo(cx - 10, GROUND_Y - 8);
+    ctx.lineTo(cx + 6, GROUND_Y - 8);
+    ctx.closePath();
+    ctx.fill();
+    // Back arc
+    ctx.beginPath();
+    ctx.moveTo(cx - 20, GROUND_Y);
+    ctx.quadraticCurveTo(cx - 10, GROUND_Y - 12, cx + 16, GROUND_Y - 4);
+    ctx.lineTo(cx + 16, GROUND_Y);
+    ctx.closePath();
+    ctx.fill();
+    // Tail hint
+    ctx.beginPath();
+    ctx.moveTo(cx - 20, GROUND_Y);
+    ctx.lineTo(cx - 26, GROUND_Y - 10);
+    ctx.lineTo(cx - 18, GROUND_Y - 2);
+    ctx.closePath();
+    ctx.fill();
+    // Splash dots
+    ctx.fillStyle = COL_LIGHT;
+    ctx.beginPath();
+    ctx.arc(cx - 28, GROUND_Y - 4, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 20, GROUND_Y - 3, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+  } else if (distToPlayer > 60) {
+    // Frame 2: full profile
+    ctx.fillStyle = COL_DARK;
+    // Body silhouette
+    ctx.beginPath();
+    // Tail fork
+    ctx.moveTo(cx - 24, GROUND_Y - 18);
+    ctx.lineTo(cx - 20, GROUND_Y - 10);
+    ctx.lineTo(cx - 24, GROUND_Y - 2);
+    ctx.lineTo(cx - 18, GROUND_Y - 6);
+    // Belly
+    ctx.quadraticCurveTo(cx - 5, GROUND_Y + 2, cx + 18, GROUND_Y - 8);
+    // Snout
+    ctx.lineTo(cx + 22, GROUND_Y - 10);
+    // Top
+    ctx.quadraticCurveTo(cx + 12, GROUND_Y - 14, cx + 4, GROUND_Y - 14);
+    // Dorsal fin
+    ctx.lineTo(cx, GROUND_Y - 28);
+    ctx.lineTo(cx - 6, GROUND_Y - 14);
+    // Back to tail
+    ctx.quadraticCurveTo(cx - 14, GROUND_Y - 14, cx - 18, GROUND_Y - 10);
+    ctx.closePath();
+    ctx.fill();
+    // Eye
+    ctx.fillStyle = COL_BG;
+    ctx.beginPath();
+    ctx.arc(cx + 12, GROUND_Y - 11, 2, 0, Math.PI * 2);
+    ctx.fill();
+    // Gill
+    ctx.strokeStyle = COL_LIGHT;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(cx + 6, GROUND_Y - 13);
+    ctx.lineTo(cx + 6, GROUND_Y - 7);
+    ctx.stroke();
+
+  } else {
+    // Frame 3: ATTACK — jaws open
+    ctx.fillStyle = COL_DARK;
+    // Body behind
+    ctx.beginPath();
+    ctx.moveTo(cx - 22, GROUND_Y - 18);
+    ctx.lineTo(cx - 18, GROUND_Y - 10);
+    ctx.lineTo(cx - 22, GROUND_Y - 2);
+    ctx.lineTo(cx - 16, GROUND_Y - 6);
+    ctx.quadraticCurveTo(cx - 5, GROUND_Y + 2, cx + 2, GROUND_Y - 4);
+    ctx.lineTo(cx + 2, GROUND_Y - 16);
+    // Dorsal
+    ctx.lineTo(cx - 2, GROUND_Y - 28);
+    ctx.lineTo(cx - 8, GROUND_Y - 14);
+    ctx.quadraticCurveTo(cx - 14, GROUND_Y - 14, cx - 18, GROUND_Y - 10);
+    ctx.closePath();
+    ctx.fill();
+    // Upper jaw
+    ctx.beginPath();
+    ctx.moveTo(cx + 2, GROUND_Y - 16);
+    ctx.quadraticCurveTo(cx + 10, GROUND_Y - 20, cx + 22, GROUND_Y - 14);
+    ctx.lineTo(cx + 22, GROUND_Y - 12);
+    ctx.lineTo(cx + 2, GROUND_Y - 10);
+    ctx.closePath();
+    ctx.fill();
+    // Upper teeth
+    ctx.fillStyle = COL_BG;
+    for (let t = 0; t < 4; t++) {
+      ctx.beginPath();
+      const tx = cx + 5 + t * 5;
+      ctx.moveTo(tx, GROUND_Y - 10);
+      ctx.lineTo(tx + 2, GROUND_Y - 10);
+      ctx.lineTo(tx + 1, GROUND_Y - 7);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Lower jaw
+    ctx.fillStyle = COL_DARK;
+    ctx.beginPath();
+    ctx.moveTo(cx + 2, GROUND_Y - 4);
+    ctx.quadraticCurveTo(cx + 10, GROUND_Y + 2, cx + 20, GROUND_Y - 2);
+    ctx.lineTo(cx + 20, GROUND_Y - 4);
+    ctx.lineTo(cx + 2, GROUND_Y - 6);
+    ctx.closePath();
+    ctx.fill();
+    // Lower teeth
+    ctx.fillStyle = COL_BG;
+    for (let t = 0; t < 3; t++) {
+      ctx.beginPath();
+      const tx = cx + 6 + t * 5;
+      ctx.moveTo(tx, GROUND_Y - 6);
+      ctx.lineTo(tx + 2, GROUND_Y - 6);
+      ctx.lineTo(tx + 1, GROUND_Y - 9);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Eye
+    ctx.fillStyle = COL_BG;
+    ctx.beginPath();
+    ctx.arc(cx + 8, GROUND_Y - 17, 2, 0, Math.PI * 2);
+    ctx.fill();
+    // Splash
+    ctx.fillStyle = COL_LIGHT;
+    ctx.beginPath();
+    ctx.arc(cx - 26, GROUND_Y - 8, 2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx + 24, GROUND_Y - 8, 2, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* ══════════════════════════════════════════════════
+   FINISH LINE — geometric island with palm tree
+   ══════════════════════════════════════════════════ */
+function drawFinishIsland() {
+  const distLeft = GOAL_DISTANCE - distance;
+  if (distLeft > 800 || state === 'IDLE') return;
+
+  const islandX = W - 200 + distLeft * 0.3;
+  if (islandX > W + 50) return;
+
+  const cx = islandX + 30;
+
+  // Sand mound (half ellipse)
+  ctx.fillStyle = COL_DARK;
+  ctx.beginPath();
+  ctx.ellipse(cx, GROUND_Y, 50, 28, 0, Math.PI, 0);
+  ctx.fill();
+
+  // Palm trunk (curved)
+  ctx.strokeStyle = COL_DARK;
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(cx, GROUND_Y - 28);
+  ctx.quadraticCurveTo(cx + 8, GROUND_Y - 50, cx + 4, GROUND_Y - 75);
+  ctx.stroke();
+
+  // Palm fronds
+  ctx.lineWidth = 2.5;
+  const topX = cx + 4, topY = GROUND_Y - 75;
+  const fronds = [
+    [-25, 8], [-18, -5], [20, 5], [28, 10], [5, -8]
+  ];
+  for (const [dx, dy] of fronds) {
+    ctx.beginPath();
+    ctx.moveTo(topX, topY);
+    ctx.quadraticCurveTo(topX + dx * 0.6, topY + dy * 0.4 - 8, topX + dx, topY + dy);
+    ctx.stroke();
+  }
+
+  // Coconuts
+  ctx.fillStyle = COL_DARK;
+  ctx.beginPath();
+  ctx.arc(topX - 3, topY + 3, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(topX + 4, topY + 4, 3, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Flag pole
+  ctx.strokeStyle = COL_DARK;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(topX, topY);
+  ctx.lineTo(topX, topY - 18);
+  ctx.stroke();
+
+  // Flag
+  ctx.fillStyle = COL_DARK;
+  ctx.beginPath();
+  ctx.moveTo(topX, topY - 18);
+  ctx.lineTo(topX + 10, topY - 14);
+  ctx.lineTo(topX, topY - 10);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/* ── SEAGULL — geometric bird ──────────────────── */
+function drawSeagull(x, y, w, h, wingFrame) {
+  const cx = x + w / 2;
+  const cy = y + h / 2;
+
+  ctx.fillStyle = COL_DARK;
+
+  // Body (horizontal ellipse)
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, 12, 5, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Head
+  ctx.beginPath();
+  ctx.arc(cx + 14, cy - 2, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Beak
+  ctx.beginPath();
+  ctx.moveTo(cx + 18, cy - 3);
+  ctx.lineTo(cx + 24, cy - 1);
+  ctx.lineTo(cx + 18, cy);
+  ctx.closePath();
+  ctx.fill();
+
+  // Eye
+  ctx.fillStyle = COL_BG;
+  ctx.beginPath();
+  ctx.arc(cx + 15, cy - 3, 1.2, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Tail
+  ctx.fillStyle = COL_DARK;
+  ctx.beginPath();
+  ctx.moveTo(cx - 12, cy);
+  ctx.lineTo(cx - 18, cy - 4);
+  ctx.lineTo(cx - 16, cy + 1);
+  ctx.closePath();
+  ctx.fill();
+
+  // Wings (curved arcs)
+  ctx.strokeStyle = COL_DARK;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = 'round';
+
+  if (wingFrame === 0) {
+    // Wings up
+    ctx.beginPath();
+    ctx.moveTo(cx - 6, cy);
+    ctx.quadraticCurveTo(cx - 12, cy - 16, cx - 18, cy - 12);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + 6, cy);
+    ctx.quadraticCurveTo(cx + 12, cy - 16, cx + 10, cy - 12);
+    ctx.stroke();
+  } else {
+    // Wings down
+    ctx.beginPath();
+    ctx.moveTo(cx - 6, cy);
+    ctx.quadraticCurveTo(cx - 12, cy + 14, cx - 18, cy + 10);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(cx + 6, cy);
+    ctx.quadraticCurveTo(cx + 12, cy + 14, cx + 10, cy + 10);
+    ctx.stroke();
+  }
+}
+
+/* ── CLOUDS (overlapping circles) ─────────────── */
+const cloudData = [
+  { x: 200,  y: 60, type: 0 },
+  { x: 550,  y: 40, type: 1 },
+  { x: 900,  y: 75, type: 2 },
+  { x: 1200, y: 50, type: 0 },
+  { x: 400,  y: 55, type: 2 },
+];
+
+function drawCloud(cx, cy, type) {
+  ctx.fillStyle = COL_LIGHT;
+
+  if (type === 0) {
+    // Small round
+    ctx.beginPath(); ctx.arc(cx, cy, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 14, cy - 3, 12, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 26, cy, 9, 0, Math.PI * 2); ctx.fill();
+  } else if (type === 1) {
+    // Wide flat
+    ctx.beginPath(); ctx.arc(cx, cy, 9, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 14, cy - 2, 11, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 28, cy, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 40, cy + 1, 8, 0, Math.PI * 2); ctx.fill();
+  } else {
+    // Tall puffy
+    ctx.beginPath(); ctx.arc(cx, cy + 4, 10, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 10, cy - 4, 14, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(cx + 22, cy + 2, 10, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+function drawClouds() {
+  for (const c of cloudData) {
+    const bx = ((c.x - cloudOffset) % (W + 200) + W + 200) % (W + 200) - 100;
+    drawCloud(bx, c.y, c.type);
+  }
+}
+
+/* ── SUN (circle + rotating rays) ────────────── */
+let sunFrame = 0;
+let sunTimer = 0;
+
+function drawSun() {
+  const sx = W - 80;
+  const sy = 40;
+
+  // Sun body
+  ctx.fillStyle = COL_LIGHT;
+  ctx.beginPath();
+  ctx.arc(sx, sy, 12, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Rotating rays
+  ctx.save();
+  ctx.translate(sx, sy);
+  ctx.rotate(sunFrame * (Math.PI / 16));
+  ctx.strokeStyle = COL_LIGHT;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  for (let i = 0; i < 8; i++) {
+    const angle = (i / 8) * Math.PI * 2;
+    const x1 = Math.cos(angle) * 16;
+    const y1 = Math.sin(angle) * 16;
+    const x2 = Math.cos(angle) * 22;
+    const y2 = Math.sin(angle) * 22;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/* ── GROUND (clean line + dot texture) ────────── */
+const groundBumps = [];
+for (let i = 0; i < 300; i++) {
+  groundBumps.push({
+    x: i * 12 + Math.random() * 8,
+    w: 1 + Math.floor(Math.random() * 3),
+    h: Math.random() < 0.3 ? 2 : 1,
+    dy: Math.floor(Math.random() * 6) + 2,
+  });
+}
+
+function drawGround() {
+  // Surface fill below ground
+  ctx.fillStyle = COL_SURFACE;
+  ctx.fillRect(0, GROUND_Y + 1.5, W, H - GROUND_Y);
+
+  // Main ground line
+  ctx.fillStyle = COL_DARK;
+  ctx.fillRect(0, GROUND_Y, W, 1.5);
+
+  // Scrolling dots below the line
+  ctx.fillStyle = COL_BORDER;
+  const totalW = 300 * 12;
+  const off = groundOffset % totalW;
+  for (const b of groundBumps) {
+    const bx = ((b.x - off) % totalW + totalW) % totalW - 20;
+    if (bx > -10 && bx < W + 10) {
+      ctx.beginPath();
+      ctx.arc(Math.round(bx), GROUND_Y + b.dy + 2, b.w * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+}
+
+/* ── MAIN DRAW ──────────────────────────────────── */
+function draw() {
+  // Clear to background
+  ctx.fillStyle = COL_BG;
+  ctx.fillRect(0, 0, W, H);
+
+  // Sun
+  drawSun();
+
+  // Clouds
+  drawClouds();
+
+  // Ground line + dots
+  drawGround();
+
+  // Obstacles
+  for (const obs of obstacles) {
+    if (obs.type === 'ground') {
+      drawShark(obs.x, obs.y, obs.w, obs.h);
+    } else {
+      drawSeagull(obs.x, obs.y, obs.w, obs.h, obs.wingFrame || 0);
+    }
+  }
+
+  // Finish line island
+  drawFinishIsland();
+
+  // Wave behind surfer
+  if (state === 'PLAYING' || state === 'GAME_OVER' || state === 'WIN') {
+    drawWaveBehindSurfer();
+  }
+
+  // Player
+  drawSurfer(player.x, player.y, player.ducking, player.jumping, player.runFrame);
+
+  // ── HUD ──
+  ctx.textAlign = 'right';
+  ctx.font = "bold 16px 'IBM Plex Mono', monospace";
+
+  const displayDist = Math.floor(distance / 100);
+  const displayHigh = Math.floor(highScore / 100);
+
+  if (highScore > 0) {
+    ctx.fillStyle = COL_TEXT_2;
+    ctx.fillText('HI ' + String(displayHigh).padStart(3, '0'), W - 20, 30);
+  }
+
+  ctx.fillStyle = COL_DARK;
+  ctx.fillText(String(displayDist).padStart(3, '0'), W - 20, 50);
+
+  // ── Overlays ──
+  ctx.textAlign = 'center';
+
+  if (state === 'IDLE') {
+    ctx.fillStyle = COL_DARK;
+    ctx.font = "bold 18px 'IBM Plex Mono', monospace";
+    ctx.fillText('Press SPACE to start', W / 2, H / 2 - 20);
+  }
+
+  if (state === 'GAME_OVER') {
+    ctx.fillStyle = COL_DARK;
+    ctx.font = "bold 24px 'IBM Plex Mono', monospace";
+    ctx.fillText('G A M E  O V E R', W / 2, H / 2 - 20);
+
+    // Restart icon
+    const rx = W / 2, ry = H / 2 + 18;
+    ctx.strokeStyle = COL_DARK;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(rx, ry, 12, 0.3, Math.PI * 1.8);
+    ctx.stroke();
+    ctx.fillStyle = COL_DARK;
+    ctx.beginPath();
+    ctx.moveTo(rx + 10, ry - 7);
+    ctx.lineTo(rx + 16, ry - 1);
+    ctx.lineTo(rx + 8, ry - 1);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  if (state === 'WIN') {
+    ctx.fillStyle = COL_DARK;
+    ctx.font = "bold 24px 'IBM Plex Mono', monospace";
+    ctx.fillText('Y O U  M A D E  I T !', W / 2, H / 2 - 20);
+    ctx.font = "14px 'IBM Plex Mono', monospace";
+    ctx.fillStyle = COL_TEXT_2;
+    ctx.fillText('Press SPACE to play again', W / 2, H / 2 + 16);
+  }
+
+  // ── Progress bar ──
+  if (state === 'PLAYING' || state === 'GAME_OVER' || state === 'WIN') {
+    const barY = H - 20;
+    const barH = 4;
+    const barMargin = 60;
+    const barW = W - barMargin * 2;
+    const progress = Math.min(distance / GOAL_DISTANCE, 1);
+
+    // Track
+    ctx.fillStyle = COL_BORDER;
+    ctx.fillRect(barMargin, barY, barW, barH);
+
+    // Fill
+    ctx.fillStyle = COL_DARK;
+    ctx.fillRect(barMargin, barY, barW * progress, barH);
+
+    // Start label
+    ctx.font = "10px 'IBM Plex Mono', monospace";
+    ctx.textAlign = 'left';
+    ctx.fillStyle = COL_TEXT_2;
+    ctx.fillText('0', barMargin, barY - 5);
+
+    // End label
+    ctx.textAlign = 'right';
+    ctx.fillText('100', barMargin + barW, barY - 5);
+
+    // Surfer dot on the bar
+    const dotX = barMargin + barW * progress;
+    ctx.fillStyle = COL_DARK;
+    ctx.beginPath();
+    ctx.arc(dotX, barY + barH / 2, 5, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+/* ── main loop ──────────────────────────────────── */
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// Idle animation for ground + clouds
+function idleAnimate() {
+  if (state !== 'PLAYING') {
+    groundOffset += 2;
+    cloudOffset  += 0.3;
+    sunTimer++;
+    if (sunTimer > 15) {
+      sunFrame = (sunFrame + 1) % 32;
+      sunTimer = 0;
+    }
+  }
+}
+setInterval(idleAnimate, 16);
+
+loop();
+</script>
+</body>
+</html>

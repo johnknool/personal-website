@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:whepworth.co)",
+      "WebFetch(domain:johnfabela.com)",
+      "mcp__Claude_Preview__preview_start",
+      "WebFetch(domain:www.johnfabela.com)",
+      "WebFetch(domain:robin-noguier.com)",
+      "WebFetch(domain:apps.apple.com)",
+      "Bash(python3 -c \":*)",
+      "Bash(gh auth status)",
+      "Bash(npm install -g netlify-cli)",
+      "Bash(netlify link --name capable-donut-a33e4f)",
+      "Bash(netlify deploy --prod --dir .)",
+      "Bash(netlify deploy --prod)",
+      "Bash(npx netlify --version)",
+      "Bash(netlify status)",
+      "Bash(npm install -g github:Knool/knool-cli)",
+      "Bash(brew install gh)",
+      "Bash(knool --version)",
+      "Bash(knool --help)",
+      "Bash(npx netlify:*)",
+      "Bash(grep -o 'Multi-Disciplinary Design[^<\\\\\\\\]*' /Users/johnfabela/.claude/projects/-Users-johnfabela-Projects-Personal-Website/28cec552-f220-4fc6-900c-d3eb8f065a76/tool-results/*.txt)",
+      "Bash(netlify sites:list)",
+      "Bash(netlify deploy:*)",
+      "Bash(netlify --version)",
+      "Bash(npm list:*)",
+      "Bash(NETLIFY_AUTH_TOKEN=nfp_kttE7nyoibPLu5dWFsBexmTnj4UYXGzA6e46 netlify deploy --prod)",
+      "Bash(curl -s -H \"Authorization: Bearer nfp_kttE7nyoibPLu5dWFsBexmTnj4UYXGzA6e46\" https://api.netlify.com/api/v1/sites/e9149046-521e-4a26-9da0-98127db94118)"
+    ]
+  }
+}

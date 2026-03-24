@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>John Fabela — Senior Product Designer</title>
+  <link rel="icon" type="image/png" href="Website_Image/favicon.png" />
+  <meta name="description" content="John Fabela is a Senior Product Designer based in Salt Lake City, UT. 10+ years shaping digital products across product, growth, and marketing." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:ital,opsz,wght@0,10..32,300;0,10..32,400;0,10..32,500;1,10..32,300&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       TOKENS
+    ═══════════════════════════════════════════════════════════ */
+    :root {
+      --bg:       #ffffff;
+      --bg-2:     #ede8e1;
+      --surface:  #faf8f6;
+      --text:     #1a1a1a;
+      --text-2:   #6b6b6b;
+      --text-3:   #999999;
+      --border:   #e8e5e1;
+      --border-2: #d4d0ca;
+      --accent:   #2C2C2C;
+      --serif:    'Libre Baskerville', Georgia, 'Times New Roman', serif;
+      --sans:     'Instrument Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      --mono:     'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+      --r:        8px;
+      --r-lg:     12px;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       RESET
+    ═══════════════════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: var(--text); text-decoration: none; }
+
+    /* ═══════════════════════════════════════════════════════════
+       SPLIT LAYOUT
+    ═══════════════════════════════════════════════════════════ */
+    .split {
+      display: flex;
+      height: 100vh;
+    }
+
+    /* ── Left sidebar (1/3) ── */
+    .sidebar {
+      width: 25%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 0;
+      background: var(--accent);
+      border-right: none;
+      overflow-y: auto;
+      flex-shrink: 0;
+      color: var(--bg-2);
+    }
+
+    .sidebar-top::before { display: none; }
+    .sidebar-top { padding: 2.5rem 2rem 0; }
+    .sidebar-bottom { padding: 1.5rem 2rem 2rem; }
+
+    .sidebar-photo {
+      width: 100%;
+      max-width: 80px;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 12px;
+      border: none;
+      margin-bottom: 1.5rem;
+      padding: 0;
+      background: none;
+    }
+    .sidebar-kicker {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      text-transform: none;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 0.5rem;
+    }
+    .sidebar-name {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 1rem;
+    }
+    .sidebar-name em {
+      font-style: italic;
+      color: #fff;
+    }
+    .sidebar-desc {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 1.5rem;
+    }
+    .sidebar-stats {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 1.75rem;
+    }
+    .sidebar-stat-num {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: #DA7756;
+      display: block;
+      line-height: 1.2;
+    }
+    .sidebar-stat-num .a { color: #DA7756; }
+    .sidebar-stat-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .sidebar-links {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.25);
+    }
+    .sidebar-links a {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .sidebar-links a:hover {
+      color: #fff;
+    }
+    .sidebar-links a span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-links svg {
+      width: 14px; height: 14px;
+      flex-shrink: 0;
+    }
+    .sidebar-links .link-arrow {
+      width: 12px; height: 12px;
+      opacity: 0.7;
+    }
+
+    .sidebar-nav {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .sidebar-nav a {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .sidebar-nav a:hover { color: #fff; }
+
+    .sidebar-copy {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.25);
+      padding-top: 1rem;
+    }
+
+    /* ── Right content (3/4) ── */
+    .main {
+      width: 75%;
+      height: 100vh;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      background: var(--bg-2);
+      position: relative;
+      scroll-behavior: smooth;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       PANELS — Full-viewport snap sections
+    ═══════════════════════════════════════════════════════════ */
+    .panel {
+      --p: 0;           /* scroll progress: 0 = below view, 1 = centered */
+      min-height: 100vh;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      padding: 3rem 2.5rem;
+    }
+    .panel > * {
+      width: 100%;
+    }
+
+    /* ── Scroll-driven card transforms ── */
+    .panel .project-card,
+    .panel .contact-card {
+      will-change: transform, opacity;
+      transform: scale(calc(0.88 + 0.12 * var(--p)))
+                 translateY(calc((1 - var(--p)) * 50px));
+      opacity: var(--p);
+      border-radius: calc(var(--r-lg) + (1 - var(--p)) * 16px);
+      box-shadow: 0 calc(4px * var(--p)) calc(30px * var(--p)) rgba(0,0,0, calc(0.06 * var(--p)));
+      transition: box-shadow 0.3s;
+    }
+
+    /* ── Staggered children reveal ── */
+    .panel .pc-top,
+    .panel .pc-title,
+    .panel .pc-chips,
+    .panel .pc-desc,
+    .panel .contact-heading,
+    .panel .contact-desc,
+    .panel .contact-email,
+    .panel .contact-resume,
+    .panel .contact-footer {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .panel.is-visible .pc-top         { opacity: 1; transform: none; transition-delay: 0.05s; }
+    .panel.is-visible .pc-title       { opacity: 1; transform: none; transition-delay: 0.1s; }
+    .panel.is-visible .pc-chips       { opacity: 1; transform: none; transition-delay: 0.16s; }
+    .panel.is-visible .pc-desc        { opacity: 1; transform: none; transition-delay: 0.22s; }
+    .panel.is-visible .contact-heading { opacity: 1; transform: none; transition-delay: 0.05s; }
+    .panel.is-visible .contact-desc   { opacity: 1; transform: none; transition-delay: 0.12s; }
+    .panel.is-visible .contact-email  { opacity: 1; transform: none; transition-delay: 0.2s; }
+    .panel.is-visible .contact-resume { opacity: 1; transform: none; transition-delay: 0.26s; }
+    .panel.is-visible .contact-footer { opacity: 1; transform: none; transition-delay: 0.32s; }
+
+    /* ── Image parallax ── */
+    .pc-images {
+      --img-shift: 0;
+    }
+    .pc-images img {
+      transform: translateY(calc(var(--img-shift) * 1px));
+      transition: transform 0.1s linear;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       GAME PANEL
+    ═══════════════════════════════════════════════════════════ */
+    .game-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 6rem);
+      padding: 2rem 3rem;
+      gap: 1.25rem;
+    }
+    .game-header {
+      text-align: center;
+    }
+    .game-kicker {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+    .game-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0.25rem 0 0.4rem;
+    }
+    .game-hint {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-2);
+    }
+    .game-hint kbd {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 11px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      margin: 0 1px;
+    }
+    .game-wrapper {
+      width: 100%;
+      max-width: 1340px;
+      aspect-ratio: 1340 / 300;
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: #ffffff;
+    }
+    .game-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      display: block;
+      border: none;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       PAGINATION DOTS
+    ═══════════════════════════════════════════════════════════ */
+    .pagination {
+      position: fixed;
+      right: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      z-index: 100;
+    }
+    .dot {
+      width: 3px;
+      height: 24px;
+      border-radius: 3px;
+      background: var(--border-2);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    .dot.active {
+      background: var(--accent);
+    }
+    .dot::after {
+      content: attr(data-label);
+      position: absolute;
+      right: calc(100% + 12px);
+      top: 50%;
+      transform: translateY(-50%);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-2);
+      background: var(--bg);
+      padding: 3px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .dot:hover::after {
+      opacity: 1;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       PROJECT CARD — 3D Flip
+    ═══════════════════════════════════════════════════════════ */
+    .project-card {
+      perspective: 1800px;
+      background: none;
+      border: none;
+      padding: 0;
+      min-height: calc(100vh - 6rem);
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      min-height: calc(100vh - 6rem);
+      border-radius: inherit;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .project-card.is-flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      backface-visibility: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: inherit;
+      overflow: hidden;
+    }
+    .card-front {
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 6rem);
+    }
+    .card-back {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      transform: rotateY(180deg);
+      overflow-y: auto;
+      padding: 2rem 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card:hover .card-front {
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+
+    .pc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 1.5rem 0;
+      background: none;
+    }
+    .pc-num {
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--text-3);
+    }
+    .pc-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      font-weight: 500;
+      color: var(--text);
+      background: none;
+      border: 1px solid var(--text-2);
+      border-radius: 100px;
+      padding: 0.4rem 1rem;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+    .pc-cta:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .pc-cta:hover svg { stroke: #fff; }
+    .pc-cta svg {
+      width: 13px; height: 13px;
+    }
+    .pc-cta.filled {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .pc-cta.filled svg { stroke: #fff; }
+    .pc-cta.filled:hover {
+      background: #444;
+      border-color: #444;
+    }
+
+    .pc-title {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.2;
+      margin: 0.75rem 1.5rem 0.5rem;
+    }
+
+    .pc-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin: 0 1.5rem 0.75rem;
+    }
+    .chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      color: var(--text-2);
+      background: var(--bg-2);
+      border: none;
+      border-radius: 100px;
+      padding: 0.25rem 0.65rem;
+      white-space: nowrap;
+    }
+
+    .pc-desc {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-2);
+      max-width: 50%;
+      margin: 0 1.5rem 1.25rem;
+    }
+
+    .pc-images {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      flex: 1;
+      min-height: 0;
+    }
+    .pc-images.landscape {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .pc-images img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border: none;
+      border-radius: 0;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       CASE STUDY (card back)
+    ═══════════════════════════════════════════════════════════ */
+    .cs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .cs-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+    .cs-close {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text-2);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.35rem 1rem;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .cs-close:hover {
+      border-color: var(--text);
+      color: var(--text);
+    }
+    .cs-title {
+      font-family: var(--serif);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+    .cs-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .cs-meta-label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 0.25rem;
+    }
+    .cs-meta-value {
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text);
+    }
+    .cs-section {
+      margin-bottom: 1.25rem;
+    }
+    .cs-section h4 {
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 0.5rem;
+    }
+    .cs-section p {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-2);
+    }
+    .cs-impact {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: auto;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
+    }
+    .cs-impact li {
+      font-family: var(--serif);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .cs-impact li span {
+      display: block;
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-top: 0.15rem;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       LOGOS SECTION
+    ═══════════════════════════════════════════════════════════ */
+    /* ── Contact panel layout ── */
+    .contact-panel > div {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2rem;
+      min-height: calc(100vh - 6rem);
+    }
+
+    /* ── Logo footer marquee ── */
+    .logo-footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 0;
+      margin: 0 -2.5rem;
+      width: calc(100% + 5rem);
+    }
+    .marquee {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 5rem;
+      width: max-content;
+      animation: marquee 45s linear infinite;
+    }
+    @keyframes marquee {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .logo-item {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-item img {
+      height: 120px;
+      width: auto;
+      opacity: 1;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       CONTACT
+    ═══════════════════════════════════════════════════════════ */
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 2.5rem;
+    }
+    .contact-heading {
+      font-family: var(--serif);
+      font-size: 26px;
+      font-weight: 700;
+      line-height: 1.25;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .contact-heading em {
+      font-style: italic;
+      color: var(--text);
+    }
+    .contact-desc {
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text-2);
+      margin-bottom: 1.25rem;
+      max-width: 50ch;
+    }
+    .contact-email {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 1rem;
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 2px;
+      transition: border-color 0.2s;
+    }
+    .contact-email:hover { border-color: var(--text); }
+    .contact-resume {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text);
+      text-decoration: none;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 0.5rem 1.25rem;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .contact-resume:hover {
+      border-color: var(--text);
+      background: var(--bg-2);
+    }
+    .contact-resume svg { width: 14px; height: 14px; }
+    .contact-footer {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--text-3);
+      margin-top: 2.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════════════════ */
+    @media (max-width: 900px) {
+      html, body { overflow: auto; height: auto; }
+      .split {
+        flex-direction: column;
+        height: auto;
+      }
+      .sidebar {
+        width: 100%;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      .main {
+        width: 100%;
+        height: auto;
+        overflow-y: visible;
+        scroll-snap-type: none;
+      }
+      .panel {
+        min-height: auto;
+        scroll-snap-align: none;
+        padding: 1.5rem;
+      }
+      .panel .project-card,
+      .panel .contact-card {
+        opacity: 1;
+        transform: none;
+      }
+      .sidebar-photo {
+        max-width: 120px;
+      }
+      .sidebar-stats { flex-wrap: wrap; }
+      .pagination { display: none; }
+    }
+    @media (max-width: 600px) {
+      .sidebar-top { padding: 1.5rem 1.25rem 0; }
+      .sidebar-bottom { padding: 0 1.25rem 1.5rem; }
+      .panel { padding: 1rem; }
+      .pc-top { padding: 1rem 1.25rem 0; }
+      .pc-title { margin: 0.75rem 1.25rem 0.5rem; }
+      .pc-chips { margin: 0 1.25rem 0.75rem; }
+      .pc-desc { margin: 0 1.25rem 1.25rem; max-width: 100%; }
+      .pc-images { grid-template-columns: 1fr; }
+      .pc-images.landscape { grid-template-columns: 1fr; }
+      .sidebar-stats { flex-direction: column; gap: 0.5rem; }
+      .contact-card { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="split">
+    <!-- ══════════════════════════════════════════════════════════
+         SIDEBAR (1/3 — fixed)
+    ══════════════════════════════════════════════════════════ -->
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <img
+          class="sidebar-photo"
+          src="Website_Image/favicon.png"
+          alt="John Fabela"
+        />
+        <p class="sidebar-kicker">Senior Product Designer &middot; SLC, UT</p>
+        <h1 class="sidebar-name">John Fabela</h1>
+        <p class="sidebar-desc">
+          I lead product design at scale. I've shipped to 150M+ users, driven $100M+ in revenue, and built a career around solving problems through design. I'm a full stack designer: design thinking, Figma, front-end, and Claude Code. I build systems, and lead teams that ship fast.
+        </p>
+        <div class="sidebar-stats">
+          <div>
+            <span class="sidebar-stat-num">10<span class="a">+</span></span>
+            <span class="sidebar-stat-label">Years</span>
+          </div>
+          <div>
+            <span class="sidebar-stat-num">150<span class="a">M+</span></span>
+            <span class="sidebar-stat-label">Users reached</span>
+          </div>
+          <div>
+            <span class="sidebar-stat-num">$100<span class="a">M+</span></span>
+            <span class="sidebar-stat-label">Revenue</span>
+          </div>
+        </div>
+        <div class="sidebar-links">
+          <a href="mailto:johnwilliamfabela@gmail.com">
+            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</span>
+            <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/in/john-fabela" target="_blank" rel="noopener">
+            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</span>
+            <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
+          <a href="resume.html" target="_blank">
+            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Resume</span>
+            <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <p class="sidebar-copy">&copy; <span id="yr"></span> John Fabela</p>
+      </div>
+    </aside>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MAIN CONTENT (2/3 — scroll-snap panels)
+    ══════════════════════════════════════════════════════════ -->
+    <main class="main" id="main-scroll">
+
+      <!-- Panel 1: Instasize -->
+      <section class="panel is-visible" data-index="0" id="work" style="--p:1">
+        <div class="project-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="pc-top">
+                <span class="pc-num">2015</span>
+                <div style="display:flex;gap:0.4rem">
+                  <a href="https://apps.apple.com/us/app/instasize-ai-photo-editor/id576649830" class="pc-cta filled" target="_blank" rel="noopener">
+                    View App
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                  <a href="https://instasize.com" class="pc-cta" target="_blank" rel="noopener">
+                    View Website
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                </div>
+              </div>
+              <h3 class="pc-title">Instasize</h3>
+              <div class="pc-chips">
+                <span class="chip">iOS</span>
+                <span class="chip">Consumer</span>
+                <span class="chip">Subscription</span>
+              </div>
+              <p class="pc-desc">A photo and video editing app downloaded by over 150 million users.</p>
+              <div class="pc-images">
+                <img src="Website_Image/instasize1.png" alt="Instasize screenshot 1" loading="lazy" />
+                <img src="Website_Image/instasize2.png" alt="Instasize screenshot 2" loading="lazy" />
+                <img src="Website_Image/instasize3.png" alt="Instasize screenshot 3" loading="lazy" />
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="cs-header">
+                <span class="cs-label">Case Study</span>
+                <button class="cs-close flip-btn">Close</button>
+              </div>
+              <h3 class="cs-title">Instasize</h3>
+              <div class="cs-meta">
+                <div><span class="cs-meta-label">Role</span><span class="cs-meta-value">Lead Product Designer</span></div>
+                <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-value">2013 &ndash; 2024</span></div>
+                <div><span class="cs-meta-label">Platform</span><span class="cs-meta-value">iOS, Android</span></div>
+              </div>
+              <div class="cs-section">
+                <h4>The Challenge</h4>
+                <p>Instasize started as a simple photo resizing tool. As the market evolved, the product needed to become a full creative suite without alienating the millions of casual users who loved its simplicity. The challenge was scaling features while keeping the core experience fast and intuitive.</p>
+              </div>
+              <div class="cs-section">
+                <h4>The Approach</h4>
+                <p>I led the design team through an iterative process rooted in data and user feedback. We conducted extensive A/B testing across subscription flows and growth loops, redesigned the editing pipeline to support video alongside photo, and built a cohesive design system that unified the experience across both platforms.</p>
+              </div>
+              <div class="cs-section">
+                <h4>Key Decisions</h4>
+                <p>Introduced a modular editing architecture that let us ship features independently per platform. Redesigned onboarding to reduce time-to-value by 40%. Created a subscription model that balanced free-tier engagement with premium conversion.</p>
+              </div>
+              <ul class="cs-impact">
+                <li>150M+ <span>Downloads</span></li>
+                <li>$100M+ <span>Revenue</span></li>
+                <li>4.7&#9733; <span>App Store</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel 2: Knool -->
+      <section class="panel" data-index="1">
+        <div class="project-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="pc-top">
+                <span class="pc-num">2025</span>
+                <div style="display:flex;gap:0.4rem">
+                  <a href="https://knool.ai" class="pc-cta filled" target="_blank" rel="noopener">
+                    View Website
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                </div>
+              </div>
+              <h3 class="pc-title">Knool</h3>
+              <div class="pc-chips">
+                <span class="chip">AI</span>
+                <span class="chip">LegalTech</span>
+                <span class="chip">SaaS</span>
+              </div>
+              <p class="pc-desc">An AI-powered platform helping attorneys analyze and navigate complex case documents, grown to $500K ARR.</p>
+              <div class="pc-images" style="grid-template-columns:1fr; place-items:center; padding:1.5rem 2.5rem;">
+                <img src="Website_Image/knool.png" alt="Knool screenshot" loading="lazy" style="max-height:100%; max-width:100%; width:auto; object-fit:contain; border-radius:8px;" />
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="cs-header">
+                <span class="cs-label">Case Study</span>
+                <button class="cs-close flip-btn">Close</button>
+              </div>
+              <h3 class="cs-title">Knool</h3>
+              <div class="cs-meta">
+                <div><span class="cs-meta-label">Role</span><span class="cs-meta-value">Product Designer</span></div>
+                <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-value">2024 &ndash; Present</span></div>
+                <div><span class="cs-meta-label">Platform</span><span class="cs-meta-value">Web SaaS</span></div>
+              </div>
+              <div class="cs-section">
+                <h4>The Challenge</h4>
+                <p>Attorneys spend hundreds of hours manually reviewing case documents. AI could accelerate this, but the legal industry is deeply skeptical of new technology — especially anything that touches case-critical work. The product needed to feel trustworthy from the first interaction.</p>
+              </div>
+              <div class="cs-section">
+                <h4>The Approach</h4>
+                <p>Conducted contextual inquiry sessions at three law firms to understand real workflows. Designed a guided onboarding experience that built trust through transparency — showing the AI's reasoning alongside its answers. Built an information architecture optimized for legal document hierarchies.</p>
+              </div>
+              <div class="cs-section">
+                <h4>Key Decisions</h4>
+                <p>Chose a conversational interface over traditional search to lower the learning curve. Added source citations to every AI response to build attorney confidence. Designed a progressive disclosure pattern that scales from simple queries to complex cross-document analysis.</p>
+              </div>
+              <ul class="cs-impact">
+                <li>60% <span>Faster review</span></li>
+                <li>92% <span>User retention</span></li>
+                <li>NPS 72 <span>Attorney score</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel 3: Made Suite -->
+      <section class="panel" data-index="2">
+        <div class="project-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="pc-top">
+                <span class="pc-num">2016</span>
+                <div style="display:flex;gap:0.4rem">
+                  <a href="https://apps.apple.com/us/app-bundle/made-editing-kit-apps-for-photo-video/id1574564576" class="pc-cta filled" target="_blank" rel="noopener">
+                    View App
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                </div>
+              </div>
+              <h3 class="pc-title">Made Suite</h3>
+              <div class="pc-chips">
+                <span class="chip">iOS</span>
+                <span class="chip">Consumer</span>
+                <span class="chip">Subscription</span>
+              </div>
+              <p class="pc-desc">A suite of creative apps for photo, video, and collage editing.</p>
+              <div class="pc-images">
+                <img src="Website_Image/made1.png" alt="Made screenshot 1" loading="lazy" />
+                <img src="Website_Image/made2.png" alt="Made screenshot 2" loading="lazy" />
+                <img src="Website_Image/made3.png" alt="Made screenshot 3" loading="lazy" />
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="cs-header">
+                <span class="cs-label">Case Study</span>
+                <button class="cs-close flip-btn">Close</button>
+              </div>
+              <h3 class="cs-title">Made Suite</h3>
+              <div class="cs-meta">
+                <div><span class="cs-meta-label">Role</span><span class="cs-meta-value">Product Designer, Brand</span></div>
+                <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-value">2016 &ndash; 2019</span></div>
+                <div><span class="cs-meta-label">Platform</span><span class="cs-meta-value">iOS</span></div>
+              </div>
+              <div class="cs-section">
+                <h4>The Challenge</h4>
+                <p>Build a family of three creative apps — Made, Videomade, and Selfiemade — that each had a distinct personality but shared recognizable design DNA. Each app targeted a different creative workflow while maintaining a unified brand experience.</p>
+              </div>
+              <div class="cs-section">
+                <h4>The Approach</h4>
+                <p>Developed a shared design system with flexible brand tokens that could adapt per-app. Led brand workshops to define each app's unique character. Crafted a motion design language that carried across the suite, making transitions and micro-interactions feel cohesive.</p>
+              </div>
+              <div class="cs-section">
+                <h4>Key Decisions</h4>
+                <p>Created a modular template system so content creators could start fast. Used gesture-driven editing to minimize UI chrome. Each app used the same core nav pattern but with distinct color palettes and iconography.</p>
+              </div>
+              <ul class="cs-impact">
+                <li>3 Apps <span>Launched</span></li>
+                <li>2M+ <span>Combined downloads</span></li>
+                <li>Featured <span>App Store</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel 4: PaperTrade -->
+      <section class="panel" data-index="3">
+        <div class="project-card">
+          <div class="card-inner">
+            <div class="card-front">
+              <div class="pc-top">
+                <span class="pc-num">2019</span>
+                <div style="display:flex;gap:0.4rem">
+                  <a href="https://apps.apple.com/us/app/papertrade-fantasy-stocks/id1569837685" class="pc-cta filled" target="_blank" rel="noopener">
+                    View App
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                </div>
+              </div>
+              <h3 class="pc-title">PaperTrade</h3>
+              <div class="pc-chips">
+                <span class="chip">FinTech</span>
+                <span class="chip">Gamification</span>
+                <span class="chip">iOS</span>
+              </div>
+              <p class="pc-desc">A fantasy stock trading app that gamified investing with real-time data and daily contests.</p>
+              <div class="pc-images">
+                <img src="Website_Image/papertrade1.png" alt="PaperTrade screenshot 1" loading="lazy" />
+                <img src="Website_Image/papertrade2.png" alt="PaperTrade screenshot 2" loading="lazy" />
+                <img src="Website_Image/papertrade3.png" alt="PaperTrade screenshot 3" loading="lazy" />
+              </div>
+            </div>
+            <div class="card-back">
+              <div class="cs-header">
+                <span class="cs-label">Case Study</span>
+                <button class="cs-close flip-btn">Close</button>
+              </div>
+              <h3 class="cs-title">PaperTrade</h3>
+              <div class="cs-meta">
+                <div><span class="cs-meta-label">Role</span><span class="cs-meta-value">Product Designer</span></div>
+                <div><span class="cs-meta-label">Timeline</span><span class="cs-meta-value">2019 &ndash; 2020</span></div>
+                <div><span class="cs-meta-label">Platform</span><span class="cs-meta-value">iOS</span></div>
+              </div>
+              <div class="cs-section">
+                <h4>The Challenge</h4>
+                <p>Stock trading apps intimidate beginners. We needed to create a space where anyone could learn market mechanics without risking real money, while making it engaging enough to build a daily habit.</p>
+              </div>
+              <div class="cs-section">
+                <h4>The Approach</h4>
+                <p>Conducted user interviews with novice investors to understand their fears and motivations. Designed a gamified trading experience with daily contests, social leaderboards, and real-time market data. Rapid prototyping and usability testing helped us nail the balance between fun and educational.</p>
+              </div>
+              <div class="cs-section">
+                <h4>Key Decisions</h4>
+                <p>Chose a dark UI to signal seriousness while using bold green accents to celebrate wins. Introduced a "Daily Contest" mechanic that created urgency and repeat engagement. Simplified chart interactions to three core gestures.</p>
+              </div>
+              <ul class="cs-impact">
+                <li>50K+ <span>Users in 1st month</span></li>
+                <li>4.8&#9733; <span>App Store</span></li>
+                <li>3x <span>Daily retention</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pagination dots -->
+      <nav class="pagination" id="pagination">
+        <button class="dot active" data-index="0" data-label="Instasize" aria-label="Go to Instasize"></button>
+        <button class="dot" data-index="1" data-label="Knool" aria-label="Go to Knool"></button>
+        <button class="dot" data-index="2" data-label="Made Suite" aria-label="Go to Made Suite"></button>
+        <button class="dot" data-index="3" data-label="PaperTrade" aria-label="Go to PaperTrade"></button>
+      </nav>
+
+    </main>
+  </div>
+
+  <script>
+    const y = new Date().getFullYear();
+    document.getElementById('yr').textContent = y;
+
+    // Elements
+    const main = document.getElementById('main-scroll');
+    const panels = [...document.querySelectorAll('.panel')];
+    const dots = [...document.querySelectorAll('.dot')];
+    let ticking = false;
+    let activeIndex = 0;
+
+    // ── Scroll-driven animation engine ──
+    function updatePanels() {
+      const vh = main.clientHeight;
+      const mainTop = main.getBoundingClientRect().top;
+
+      panels.forEach((panel, i) => {
+        const rect = panel.getBoundingClientRect();
+        const relTop = rect.top - mainTop;
+
+        // Tent function: p peaks at 1 when panel is snapped, falls to 0 in both directions
+        const raw = 1 - Math.abs(relTop) / vh;
+        const p = Math.max(0, Math.min(1, raw));
+
+        // Set CSS custom property for scroll-driven transforms
+        panel.style.setProperty('--p', p.toFixed(3));
+
+        // Trigger stagger animations when panel is sufficiently visible
+        if (p > 0.35) {
+          panel.classList.add('is-visible');
+        } else {
+          panel.classList.remove('is-visible');
+        }
+
+        // Image parallax: shift images based on how centered the panel is
+        const images = panel.querySelector('.pc-images');
+        if (images) {
+          const offset = (1 - p) * 30; // 30px parallax range
+          images.style.setProperty('--img-shift', offset.toFixed(1));
+        }
+
+      });
+
+      // Update pagination based on scroll position
+      const scrollPos = main.scrollTop;
+      const panelHeight = panels[0].offsetHeight;
+      activeIndex = Math.min(Math.round(scrollPos / panelHeight), panels.length - 1);
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === activeIndex);
+      });
+    }
+
+    main.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updatePanels();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Also catch the final snap position
+    main.addEventListener('scrollend', updatePanels);
+
+    // Initial update
+    updatePanels();
+
+    // ── Dot click → scroll to panel ──
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        panels[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // ── Sidebar nav → scroll inside .main ──
+    document.querySelectorAll('[data-nav]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // ── Card flip ──
+    document.querySelectorAll('.flip-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const card = btn.closest('.project-card');
+        card.classList.toggle('is-flipped');
+      });
+    });
+
+  </script>
+
+</body>
+</html>
