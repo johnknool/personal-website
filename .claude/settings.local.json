@@ -26,7 +26,14 @@
       "Bash(netlify --version)",
       "Bash(npm list:*)",
       "Bash(NETLIFY_AUTH_TOKEN=nfp_kttE7nyoibPLu5dWFsBexmTnj4UYXGzA6e46 netlify deploy --prod)",
-      "Bash(curl -s -H \"Authorization: Bearer nfp_kttE7nyoibPLu5dWFsBexmTnj4UYXGzA6e46\" https://api.netlify.com/api/v1/sites/e9149046-521e-4a26-9da0-98127db94118)"
+      "Bash(curl -s -H \"Authorization: Bearer nfp_kttE7nyoibPLu5dWFsBexmTnj4UYXGzA6e46\" https://api.netlify.com/api/v1/sites/e9149046-521e-4a26-9da0-98127db94118)",
+      "Bash(gh repo:*)",
+      "Bash(dig johnfabela.com +short)",
+      "Bash(curl -sI http://johnfabela.com)",
+      "Bash(gh api:*)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(''''Status:'''', d.get\\(''''status''''\\)\\); print\\(''''HTTPS:'''', d.get\\(''''https_enforced''''\\)\\); print\\(''''CNAME:'''', d.get\\(''''cname''''\\)\\)\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(''''HTTPS enforced:'''', d.get\\(''''https_enforced''''\\)\\); print\\(''''Status:'''', d.get\\(''''status''''\\)\\)\")",
+      "Bash(curl -sI https://johnfabela.com)"
     ]
   }
 }
