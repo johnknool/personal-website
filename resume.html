@@ -347,26 +347,49 @@
     /* ── PRINT ── */
     @media print {
       @page { size: Letter; margin: 0; }
-      body { background: white; }
+      body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       .page {
         max-width: 100%; margin: 0;
         box-shadow: none; border-radius: 0;
         min-height: 100vh;
       }
       .top-bar { display: none; }
-      .sidebar { width: 240px; padding: 0.5in 0.4in; gap: 1.25rem; }
-      .sidebar-avatar { width: 60px; height: 60px; }
-      .sidebar-stat-num { font-size: 16px; }
-      .main { padding: 0.5in 0.5in; }
-      .main-name { font-size: 1.75rem; }
-      .main-summary { font-size: 11px; }
-      .job-company { font-size: 13px; }
-      .job-bullets li { font-size: 11px; line-height: 1.5; }
-      .job-bullets { gap: 0.25rem; }
-      .job { margin-bottom: 1.25rem; }
-      .main-divider { margin: 1.25rem 0; }
+      .sidebar {
+        width: 220px;
+        padding: 0.4in 0.35in;
+        gap: 1rem;
+        background: var(--accent) !important;
+        color: rgba(255,255,255,0.85) !important;
+      }
+      .sidebar-avatar { width: 45px; }
+      .sidebar-section-label { font-size: 8px; margin-bottom: 0.5rem; padding-bottom: 0.35rem; }
+      .sidebar-stat-num { font-size: 15px; }
+      .sidebar-stat-label { font-size: 8px; }
+      .sidebar-stat { gap: 0.1rem; }
+      .sidebar-stats { gap: 0.5rem; }
+      .contact-item { font-size: 10px; margin-bottom: 0.4rem; }
+      .contact-item svg { width: 11px; height: 11px; }
+      .skill-tag { font-size: 9px; padding: 0.1rem 0.3rem; margin: 0 0.2rem 0.2rem 0; }
+      .sidebar-edu-school { font-size: 11px; }
+      .sidebar-edu-degree { font-size: 10px; }
+      .sidebar-edu-dates { font-size: 9px; }
+      .main { padding: 0.4in 0.45in; }
+      .main-name { font-size: 1.6rem; }
+      .main-title { font-size: 13px; margin-top: 0.2rem; }
+      .main-summary { font-size: 10.5px; line-height: 1.6; }
+      .main-divider { margin: 1rem 0; }
+      .main-section-label { font-size: 9px; margin-bottom: 0.8rem; }
+      .job { margin-bottom: 1rem; }
+      .job-company { font-size: 12.5px; }
+      .job-role { font-size: 11px; }
+      .job-dates { font-size: 9px; }
+      .job-subtitle { font-size: 10px; margin-bottom: 0.35rem; }
+      .job-bullets { gap: 0.2rem; margin-top: 0.4rem; }
+      .job-bullets li { font-size: 10.5px; line-height: 1.5; padding-left: 0.7rem; }
+      .job-bullets li::before { width: 2.5px; height: 2.5px; }
+      .job-role-row { margin-bottom: 0; }
+      .job-role-title { font-size: 11px; }
       a { color: inherit; }
-      .skill-tag { font-size: 10px; padding: 0.15rem 0.35rem; }
     }
 
     /* ── RESPONSIVE ── */
