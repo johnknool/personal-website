@@ -223,11 +223,14 @@
     ═══════════════════════════════════════════════════════════ */
     .panel {
       --p: 0;           /* scroll progress: 0 = below view, 1 = centered */
+      height: 100vh;
       min-height: 100vh;
       scroll-snap-align: start;
+      scroll-snap-stop: always;
       display: flex;
       align-items: center;
       padding: 3rem 2.5rem;
+      flex-shrink: 0;
     }
     .panel > * {
       width: 100%;
