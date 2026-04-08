@@ -19,16 +19,16 @@
        TOKENS
     ═══════════════════════════════════════════════════════════ */
     :root {
-      --bg:       #ffffff;
-      --bg-2:     #ede8e1;
-      --surface:  #faf8f6;
+      --bg:       #ece7d8;
+      --bg-2:     #d5cfbe;
+      --surface:  #f2ede3;
       --text:     #1a1a1a;
       --text-2:   #6b6b6b;
       --text-3:   #999999;
-      --border:   #e8e5e1;
-      --border-2: #d4d0ca;
-      --accent:   #2C2C2C;
-      --serif:    'Libre Baskerville', Georgia, 'Times New Roman', serif;
+      --border:   #ccc7b8;
+      --border-2: #b8b2a3;
+      --accent:   #1d1d16;
+      --serif:    Georgia, 'Times New Roman', serif;
       --sans:     'Instrument Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
       --mono:     'IBM Plex Mono', 'SF Mono', Consolas, monospace;
       --r:        8px;
@@ -40,6 +40,20 @@
     ═══════════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; }
+
+    /* Grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.08;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 250px 250px;
+    }
+
     body {
       background: var(--bg);
       color: var(--text);
@@ -124,7 +138,7 @@
       margin-bottom: 1.75rem;
     }
     .sidebar-stat-num {
-      font-family: 'Poppins', var(--sans);
+      font-family: var(--serif);
       font-size: 22px;
       font-weight: 600;
       color: #ffffff;
@@ -847,7 +861,7 @@
             <span class="sidebar-stat-label">Years</span>
           </div>
           <div>
-            <span class="sidebar-stat-num">150<span class="a">M+</span></span>
+            <span class="sidebar-stat-num">150<span class="a">m+</span></span>
             <span class="sidebar-stat-label">Users reached</span>
           </div>
           <div>

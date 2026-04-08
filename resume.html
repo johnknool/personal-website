@@ -16,23 +16,37 @@
 
   <style>
     :root {
-      --bg:       #ffffff;
-      --bg-2:     #ede8e1;
-      --surface:  #faf8f6;
+      --bg:       #ece7d8;
+      --bg-2:     #d5cfbe;
+      --surface:  #f2ede3;
       --text:     #1a1a1a;
       --text-2:   #6b6b6b;
       --text-3:   #999999;
-      --border:   #e8e5e1;
-      --border-2: #d4d0ca;
-      --accent:   #2C2C2C;
+      --border:   #ccc7b8;
+      --border-2: #b8b2a3;
+      --accent:   #1d1d16;
       --highlight: #1a1a1a;
       --highlight-light: #ffffff;
-      --serif:    'Libre Baskerville', Georgia, 'Times New Roman', serif;
+      --serif:    Georgia, 'Times New Roman', serif;
       --sans:     'Instrument Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
       --mono:     'IBM Plex Mono', 'SF Mono', Consolas, monospace;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* Grain overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.08;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 250px 250px;
+    }
+
     body {
       background: var(--bg-2);
       color: var(--text);
@@ -86,6 +100,7 @@
       max-width: 900px;
       margin: 1.5rem auto 3rem;
       display: flex;
+      flex-direction: row-reverse;
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
@@ -97,7 +112,7 @@
       flex-shrink: 0;
       background: var(--accent);
       color: rgba(255,255,255,0.85);
-      padding: 2.5rem 2rem;
+      padding: 1.75rem 2rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
@@ -151,7 +166,7 @@
       gap: 0.15rem;
     }
     .sidebar-stat-num {
-      font-family: 'Poppins', var(--sans);
+      font-family: var(--serif);
       font-size: 20px;
       font-weight: 600;
       color: var(--highlight-light);
@@ -422,8 +437,6 @@
     <!-- ══ SIDEBAR ══ -->
     <aside class="sidebar">
 
-      <img src="Website_Image/jf_logo.svg" alt="JF" class="sidebar-avatar" />
-
       <!-- Contact -->
       <div>
         <a class="contact-item" href="mailto:johnwilliamfabela@gmail.com">
@@ -448,7 +461,7 @@
             <span class="sidebar-stat-label">Years</span>
           </div>
           <div class="sidebar-stat">
-            <span class="sidebar-stat-num">150M+</span>
+            <span class="sidebar-stat-num">150m+</span>
             <span class="sidebar-stat-label">Users Reached</span>
           </div>
           <div class="sidebar-stat">
