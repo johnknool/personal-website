@@ -866,7 +866,11 @@
       .sidebar-stats { flex-direction: column; gap: 0.5rem; }
       .contact-card { padding: 1.5rem; }
       .project-card, .card-inner, .card-front { min-height: auto; width: 100%; max-width: 100%; overflow: hidden; }
-      .pc-images { flex: none; overflow: hidden; }
+      .pc-images { flex: none; overflow: hidden; height: 55vw; }
+      .pc-images img { height: 100%; width: 100%; object-fit: cover; }
+      /* Single-image cards (Knool, Instasize Web) */
+      .pc-images[style*="grid-template-columns:1fr"] { height: auto; }
+      .pc-images[style*="grid-template-columns:1fr"] img { height: auto; width: 100%; object-fit: contain; }
     }
   </style>
 </head>
@@ -1186,7 +1190,7 @@
                 <span class="chip">AI Tools</span>
                 <span class="chip">B2B</span>
               </div>
-              <div class="pc-images" style="grid-template-columns:1fr; align-items:flex-start; padding:1.5rem 2.5rem;">
+              <div class="pc-images" style="grid-template-columns:1fr; align-items:flex-start; padding:1.5rem 2.5rem 2.5rem;">
                 <img src="Website_Image/instasize_web.png" alt="Instasize Web tools" loading="lazy" style="max-height:100%; max-width:100%; width:100%; object-fit:contain; border-radius:8px;" />
               </div>
             </div>
