@@ -541,7 +541,7 @@
       color: var(--text);
       max-width: 100%;
       margin: 0 1.5rem 0.5rem;
-      white-space: nowrap;
+      white-space: normal;
     }
 
     button.pc-cta { cursor: pointer; }
@@ -794,6 +794,21 @@
        RESPONSIVE
     ═══════════════════════════════════════════════════════════ */
     @media (max-width: 900px) {
+      /* Disable entrance animations — scroll detection doesn't work on stacked layout */
+      .panel .pc-top,
+      .panel .pc-title,
+      .panel .pc-chips,
+      .panel .pc-desc,
+      .panel .contact-heading,
+      .panel .contact-desc,
+      .panel .contact-email,
+      .panel .contact-resume,
+      .panel .contact-footer {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+
       html, body { overflow: auto; height: auto; }
       .split {
         flex-direction: column;
@@ -812,6 +827,7 @@
         scroll-snap-type: none;
       }
       .panel {
+        height: auto;
         min-height: auto;
         scroll-snap-align: none;
         padding: 1.5rem;
@@ -829,16 +845,21 @@
     }
     @media (max-width: 600px) {
       .sidebar-top { padding: 1.5rem 1.25rem 0; }
-      .sidebar-bottom { padding: 0 1.25rem 1.5rem; }
+      .sidebar-bottom { display: none; }
+      .mobile-footer { display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 1.5rem; border-top: 1px solid var(--border); color: var(--text-2); font-family: var(--mono); font-size: 12px; }
       .panel { padding: 1rem; }
-      .pc-top { padding: 1rem 1.25rem 0; }
+      .pc-top { padding: 1rem 1.25rem 0; flex-wrap: wrap; gap: 0.5rem; }
+      .pc-num { width: 100%; }
+      .pc-top-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
       .pc-title { margin: 0.75rem 1.25rem 0.5rem; }
-      .pc-desc { margin: 0 1.25rem 0.5rem; max-width: 100%; }
+      .pc-desc { margin: 0 1.25rem 0.5rem; max-width: 100%; white-space: normal; }
       .pc-chips { margin: 0 1.25rem 1.25rem; }
       .pc-images { grid-template-columns: 1fr; }
       .pc-images.landscape { grid-template-columns: 1fr; }
       .sidebar-stats { flex-direction: column; gap: 0.5rem; }
       .contact-card { padding: 1.5rem; }
+      .project-card, .card-inner, .card-front { min-height: auto; }
+      .pc-images { flex: none; overflow: hidden; }
     }
   </style>
 </head>
@@ -980,8 +1001,8 @@
                 <span class="chip">LegalTech</span>
                 <span class="chip">SaaS</span>
               </div>
-              <div class="pc-images" style="grid-template-columns:1fr; place-items:center; padding:1.5rem 2.5rem;">
-                <img src="Website_Image/knool.png" alt="Knool screenshot" loading="lazy" style="max-height:100%; max-width:100%; width:auto; object-fit:contain; border-radius:8px;" />
+              <div class="pc-images" style="grid-template-columns:1fr; align-items:flex-start; padding:1.5rem 2.5rem;">
+                <img src="Website_Image/knool.png" alt="Knool screenshot" loading="lazy" style="max-height:100%; max-width:100%; width:100%; object-fit:contain; border-radius:8px;" />
               </div>
             </div>
             <div class="card-back">
@@ -1158,8 +1179,8 @@
                 <span class="chip">AI Tools</span>
                 <span class="chip">B2B</span>
               </div>
-              <div class="pc-images" style="grid-template-columns:1fr; place-items:center; padding:1.5rem 2.5rem;">
-                <img src="Website_Image/instasize_web.png" alt="Instasize Web tools" loading="lazy" style="max-height:100%; max-width:100%; width:auto; object-fit:contain; border-radius:8px;" />
+              <div class="pc-images" style="grid-template-columns:1fr; align-items:flex-start; padding:1.5rem 2.5rem;">
+                <img src="Website_Image/instasize_web.png" alt="Instasize Web tools" loading="lazy" style="max-height:100%; max-width:100%; width:100%; object-fit:contain; border-radius:8px;" />
               </div>
             </div>
             <div class="card-back">
@@ -1206,9 +1227,21 @@
     </main>
   </div>
 
+  <footer class="mobile-footer" style="display:none;">
+    <img src="Website_Image/jf_logo.svg" alt="JF" style="width:24px;height:auto;opacity:0.5;" />
+    <span>&copy; <span class="yr-mobile"></span> John Fabela</span>
+  </footer>
+
   <script>
     const y = new Date().getFullYear();
     document.getElementById('yr').textContent = y;
+    document.querySelectorAll('.yr-mobile').forEach(el => el.textContent = y);
+    const mobileFooter = document.querySelector('.mobile-footer');
+    function toggleMobileFooter() {
+      mobileFooter.style.display = window.innerWidth <= 900 ? 'flex' : 'none';
+    }
+    toggleMobileFooter();
+    window.addEventListener('resize', toggleMobileFooter);
 
     // Elements
     const main = document.getElementById('main-scroll');
