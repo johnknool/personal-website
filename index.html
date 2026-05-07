@@ -809,10 +809,12 @@
         transition: none !important;
       }
 
-      html, body { overflow: auto; height: auto; }
+      html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
       .split {
         flex-direction: column;
         height: auto;
+        width: 100%;
+        overflow-x: hidden;
       }
       .sidebar {
         width: 100%;
@@ -822,15 +824,20 @@
       }
       .main {
         width: 100%;
+        max-width: 100%;
         height: auto;
         overflow-y: visible;
+        overflow-x: hidden;
         scroll-snap-type: none;
       }
       .panel {
         height: auto;
         min-height: auto;
+        width: 100%;
+        max-width: 100%;
         scroll-snap-align: none;
         padding: 1.5rem;
+        box-sizing: border-box;
       }
       .panel .project-card,
       .panel .contact-card {
@@ -858,7 +865,7 @@
       .pc-images.landscape { grid-template-columns: 1fr; }
       .sidebar-stats { flex-direction: column; gap: 0.5rem; }
       .contact-card { padding: 1.5rem; }
-      .project-card, .card-inner, .card-front { min-height: auto; }
+      .project-card, .card-inner, .card-front { min-height: auto; width: 100%; max-width: 100%; overflow: hidden; }
       .pc-images { flex: none; overflow: hidden; }
     }
   </style>
