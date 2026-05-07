@@ -866,11 +866,8 @@
       .sidebar-stats { flex-direction: column; gap: 0.5rem; }
       .contact-card { padding: 1.5rem; }
       .project-card, .card-inner, .card-front { min-height: auto; width: 100%; max-width: 100%; overflow: hidden; }
-      .pc-images { flex: none; overflow: hidden; height: 55vw; }
-      .pc-images img { height: 100%; width: 100%; object-fit: cover; }
-      /* Single-image cards (Knool, Instasize Web) */
-      .pc-images[style*="grid-template-columns:1fr"] { height: auto; }
-      .pc-images[style*="grid-template-columns:1fr"] img { height: auto; width: 100%; object-fit: contain; }
+      .pc-images { flex: none; overflow: hidden; height: auto; }
+      .pc-images img { height: auto; width: 100%; object-fit: cover; }
     }
   </style>
 </head>
