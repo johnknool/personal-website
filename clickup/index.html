@@ -833,7 +833,6 @@ h1,h2,h3,blockquote,.context-title,.bold-stmt-text,.decision-quote,.agenda-title
   <span id="slide-counter">1 / 27</span>
   <button onclick="nextSlide()">Next &#8594;</button>
 </div>
-<button id="notes-toggle" onclick="toggleNotes()">Speaker Notes</button>
 <script>
 const slides=document.querySelectorAll('.slide');
 const counter=document.getElementById('slide-counter');
@@ -875,7 +874,6 @@ window.addEventListener('resize', setScale);
 document.addEventListener('keydown',e=>{
   if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();nextSlide()}
   if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();prevSlide()}
-  if(e.key==='n'||e.key==='N')toggleNotes();
 });
 progress.style.width=(1/28*100)+'%';
 </script>
