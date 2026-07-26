@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,700;1,400;1,700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:ital,opsz,wght@0,10..32,300;0,10..32,400;0,10..32,500;1,10..32,300&family=Poppins:wght@600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
 
@@ -28,8 +28,8 @@
       --border:   #ccc7b8;
       --border-2: #b8b2a3;
       --accent:   #1d1d16;
-      --serif:    Georgia, 'Times New Roman', serif;
-      --sans:     'Instrument Sans', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+      --serif:    'Source Serif 4', 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+      --sans:     'Source Sans 3', 'Source Sans Pro', -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
       --mono:     'IBM Plex Mono', 'SF Mono', Consolas, monospace;
       --r:        8px;
       --r-lg:     12px;
@@ -40,6 +40,37 @@
     ═══════════════════════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body { height: 100%; overflow: hidden; }
+
+    /* ── Custom cursor ── */
+    @media (hover: hover) {
+      * { cursor: none !important; }
+      .cursor-dot {
+        position: fixed;
+        top: 0; left: 0;
+        width: 8px; height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99999;
+        transform: translate(-50%, -50%);
+        transition: width 0.3s cubic-bezier(0.16,1,0.3,1),
+                    height 0.3s cubic-bezier(0.16,1,0.3,1),
+                    background 0.3s ease,
+                    opacity 0.3s ease;
+        will-change: transform;
+      }
+      .cursor-dot.expanded {
+        width: 40px;
+        height: 40px;
+        background: transparent;
+        border: 1.5px solid var(--accent);
+        opacity: 0.6;
+      }
+      .cursor-dot.on-dark {
+        background: #fff;
+        border-color: #fff;
+      }
+    }
 
     /* Grain overlay */
     body::after {
@@ -73,42 +104,38 @@
       height: 100vh;
     }
 
-    /* ── Left sidebar (1/3) ── */
+    /* ── Left sidebar (bento cards) ── */
     .sidebar {
       width: 25%;
       height: 100vh;
+      box-sizing: border-box;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      padding: 0;
-      background: var(--accent);
-      border-right: none;
+      gap: 22px;
+      padding: 22px 0 22px 22px;
+      background: transparent;
       overflow-y: auto;
       flex-shrink: 0;
-      color: var(--bg-2);
     }
 
-    .sidebar-top::before { display: none; }
-    .sidebar-top { padding: 3.5rem 2.5rem 0; }
-    .sidebar-bottom { padding: 1.5rem 2.5rem 2.5rem; }
-
-    .sidebar-photo {
-      width: 100%;
-      max-width: 80px;
-      height: auto;
-      object-fit: contain;
-      border-radius: 0;
-      border: none;
-      margin-bottom: 1.5rem;
-      padding: 0;
-      background: none;
+    .sidebar-card {
+      background: var(--accent);
+      border-radius: 14px;
+      color: #fff;
     }
+
+    .personal-card {
+      flex: 1 0 auto;
+      padding: 2.25rem 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
     .sidebar-kicker {
       font-family: var(--mono);
       font-size: 12px;
       font-weight: 400;
       letter-spacing: 0.02em;
-      text-transform: none;
       color: rgba(255,255,255,0.85);
       margin-bottom: 0.5rem;
     }
@@ -120,32 +147,28 @@
       color: #fff;
       margin-bottom: 1.5rem;
     }
-    .sidebar-name em {
-      font-style: italic;
-      color: #fff;
-    }
+    .sidebar-name em { font-style: italic; color: #fff; }
     .sidebar-desc {
       font-family: var(--sans);
       font-size: 14px;
       font-weight: 300;
       line-height: 1.65;
       color: rgba(255,255,255,0.85);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
     }
     .sidebar-stats {
       display: flex;
       gap: 1.5rem;
-      margin-bottom: 1.75rem;
     }
     .sidebar-stat-num {
-      font-family: var(--serif);
+      font-family: var(--sans);
       font-size: 22px;
       font-weight: 600;
-      color: #ffffff;
+      color: #fff;
       display: block;
       line-height: 1.2;
     }
-    .sidebar-stat-num .a { color: #ffffff; }
+    .sidebar-stat-num .a { color: #fff; }
     .sidebar-stat-label {
       font-family: var(--mono);
       font-size: 11px;
@@ -155,719 +178,559 @@
       color: rgba(255,255,255,0.7);
     }
 
-    .sidebar-links {
+    /* ── Links card (Email · LinkedIn · Resume in one card) ── */
+    .links-card {
+      flex-shrink: 0;
+      padding: 0.4rem 1.6rem;
       display: flex;
       flex-direction: column;
-      gap: 0;
-      margin-top: 1.5rem;
-      border-top: 1px solid rgba(255,255,255,0.25);
     }
-    .sidebar-links a {
-      font-family: var(--mono);
-      font-size: 13px;
-      color: #fff;
-      text-decoration: none;
+    .links-card a {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.9rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.25);
-      cursor: pointer;
-      transition: color 0.2s, background 0.2s, padding 0.2s;
-    }
-    .sidebar-links a:hover {
+      padding: 1.05rem 0;
+      font-family: var(--mono);
+      font-size: 14px;
       color: #fff;
-      background: rgba(255,255,255,0.06);
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-      margin: 0 -0.5rem;
-      width: calc(100% + 1rem);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255,255,255,0.14);
+      transition: padding-left 0.25s cubic-bezier(0.16,1,0.3,1);
     }
-    .sidebar-links a span {
+    .links-card a:last-child { border-bottom: none; }
+    .links-card a:hover { padding-left: 0.4rem; }
+    .links-card a:hover .link-arrow { opacity: 1; }
+    .links-card span {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
-    .sidebar-links svg {
-      width: 14px; height: 14px;
-      flex-shrink: 0;
-    }
-    .sidebar-links .link-arrow {
-      width: 12px; height: 12px;
-      opacity: 0.7;
-    }
+    .links-card svg { width: 15px; height: 15px; flex-shrink: 0; }
+    .links-card .link-arrow { width: 13px; height: 13px; opacity: 0.55; transition: opacity 0.2s; }
 
-    .sidebar-nav {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.35rem;
-    }
-    .sidebar-nav a {
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .sidebar-nav a:hover { color: #fff; }
-
-    .sidebar-copy {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: rgba(255,255,255,0.6);
-      margin-top: 1.5rem;
-      border-top: 1px solid rgba(255,255,255,0.25);
-      padding-top: 1rem;
-    }
-
-    /* ── Right content (3/4) ── */
+    /* ── Right content ── */
     .main {
       width: 75%;
       height: 100vh;
       overflow-y: auto;
-      scroll-snap-type: y mandatory;
-      background: var(--bg-2);
-      position: relative;
-      scroll-behavior: smooth;
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       PANELS — Full-viewport snap sections
-    ═══════════════════════════════════════════════════════════ */
-    .panel {
-      --p: 0;           /* scroll progress: 0 = below view, 1 = centered */
-      height: 100vh;
-      min-height: 100vh;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-      display: flex;
-      align-items: center;
-      padding: 3rem 2.5rem;
-      flex-shrink: 0;
-    }
-    .panel > * {
-      width: 100%;
-    }
-
-    /* ── Scroll-driven card transforms ── */
-    .panel .project-card,
-    .panel .contact-card {
-      will-change: transform, opacity;
-      transform: scale(calc(0.88 + 0.12 * var(--p)))
-                 translateY(calc((1 - var(--p)) * 50px));
-      opacity: var(--p);
-      border-radius: calc(var(--r-lg) + (1 - var(--p)) * 16px);
-      box-shadow: 0 calc(4px * var(--p)) calc(30px * var(--p)) rgba(0,0,0, calc(0.06 * var(--p)));
-      transition: box-shadow 0.3s;
-    }
-
-    /* ── Staggered children reveal ── */
-    .panel .pc-top,
-    .panel .pc-title,
-    .panel .pc-chips,
-    .panel .pc-desc,
-    .panel .contact-heading,
-    .panel .contact-desc,
-    .panel .contact-email,
-    .panel .contact-resume,
-    .panel .contact-footer {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .panel.is-visible .pc-top         { opacity: 1; transform: none; transition-delay: 0.05s; }
-    .panel.is-visible .pc-title       { opacity: 1; transform: none; transition-delay: 0.1s; }
-    .panel.is-visible .pc-desc        { opacity: 1; transform: none; transition-delay: 0.16s; }
-    .panel.is-visible .pc-chips       { opacity: 1; transform: none; transition-delay: 0.22s; }
-    .panel.is-visible .contact-heading { opacity: 1; transform: none; transition-delay: 0.05s; }
-    .panel.is-visible .contact-desc   { opacity: 1; transform: none; transition-delay: 0.12s; }
-    .panel.is-visible .contact-email  { opacity: 1; transform: none; transition-delay: 0.2s; }
-    .panel.is-visible .contact-resume { opacity: 1; transform: none; transition-delay: 0.26s; }
-    .panel.is-visible .contact-footer { opacity: 1; transform: none; transition-delay: 0.32s; }
-
-    /* ── Image parallax ── */
-    .pc-images {
-      --img-shift: 0;
-    }
-    .pc-images img {
-      transform: translateY(calc(var(--img-shift) * 1px));
-      transition: transform 0.1s linear;
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       GAME PANEL
-    ═══════════════════════════════════════════════════════════ */
-    .game-panel {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 6rem);
-      padding: 2rem 3rem;
-      gap: 1.25rem;
-    }
-    .game-header {
-      text-align: center;
-    }
-    .game-kicker {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-3);
-    }
-    .game-title {
-      font-family: var(--serif);
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text);
-      margin: 0.25rem 0 0.4rem;
-    }
-    .game-hint {
-      font-family: var(--mono);
-      font-size: 12px;
-      color: var(--text-2);
-    }
-    .game-hint kbd {
-      display: inline-block;
-      font-family: var(--mono);
-      font-size: 11px;
-      background: var(--bg-2);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      padding: 1px 5px;
-      margin: 0 1px;
-    }
-    .game-wrapper {
-      width: 100%;
-      max-width: 1340px;
-      aspect-ratio: 1340 / 300;
-      border-radius: var(--r-lg);
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: #ffffff;
-    }
-    .game-wrapper iframe {
-      width: 100%;
-      height: 100%;
-      display: block;
-      border: none;
-    }
-
-    /* ═══════════════════════════════════════════════════════════
-       PAGINATION DOTS
-    ═══════════════════════════════════════════════════════════ */
-    .pagination {
-      position: fixed;
-      right: 1.25rem;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 14px;
-      z-index: 100;
-    }
-    .dot {
-      width: 3px;
-      height: 24px;
-      border-radius: 3px;
-      background: var(--border-2);
-      border: none;
-      padding: 0;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      position: relative;
-    }
-    .dot.active {
-      background: var(--accent);
-    }
-    .dot::after {
-      content: attr(data-label);
-      position: absolute;
-      right: calc(100% + 12px);
-      top: 50%;
-      transform: translateY(-50%);
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-2);
       background: var(--bg);
-      padding: 3px 10px;
-      border-radius: 6px;
-      white-space: nowrap;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-    .dot:hover::after {
-      opacity: 1;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      padding: 22px;
+      box-sizing: border-box;
     }
 
     /* ═══════════════════════════════════════════════════════════
-       PROJECT CARD — 3D Flip
+       PROJECT GRID
     ═══════════════════════════════════════════════════════════ */
-    .project-card {
-      perspective: 1800px;
-      background: none;
-      border: none;
-      padding: 0;
-      min-height: calc(100vh - 6rem);
-    }
-    .card-inner {
-      position: relative;
-      width: 100%;
-      min-height: calc(100vh - 6rem);
-      border-radius: inherit;
-      transform-style: preserve-3d;
-      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .project-card.is-flipped .card-inner {
-      transform: rotateY(180deg);
-    }
-    .card-front, .card-back {
-      backface-visibility: hidden;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: inherit;
-      overflow: hidden;
-    }
-    .card-front {
-      display: flex;
-      flex-direction: column;
-      min-height: calc(100vh - 6rem);
-    }
-    .card-back {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      transform: rotateY(180deg);
-      overflow-y: auto;
-      padding: 2rem 2rem 2.5rem;
-      display: flex;
-      flex-direction: column;
-    }
-    .project-card:hover .card-front {
-      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
-    }
-
-    .pc-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 1.5rem 0;
-      background: none;
-    }
-    .pc-num {
-      font-family: var(--mono);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      color: var(--text-2);
-    }
-    .pc-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--mono);
-      font-size: 12px;
-      letter-spacing: 0.02em;
-      font-weight: 500;
-      color: var(--text);
-      background: none;
-      border: 1px solid var(--text-2);
-      border-radius: 100px;
-      padding: 0.4rem 1rem;
-      white-space: nowrap;
-      text-decoration: none;
-      transition: border-color 0.2s, background 0.2s, color 0.2s;
-    }
-    .pc-cta:hover {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    .pc-cta:hover svg { stroke: #fff; }
-    .pc-cta svg {
-      width: 13px; height: 13px;
-    }
-    .pc-cta.filled {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    .pc-cta.filled svg { stroke: #fff; }
-    .pc-cta.filled:hover {
-      background: #444;
-      border-color: #444;
-    }
-
-    .pc-title {
-      font-family: var(--serif);
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.2;
-      margin: 0.75rem 1.5rem 0.5rem;
-    }
-
-    .pc-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin: 0 1.5rem 1.25rem;
-    }
-    .chip {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 0.02em;
-      color: var(--text-2);
-      background: var(--bg-2);
-      border: none;
-      border-radius: 100px;
-      padding: 0.25rem 0.65rem;
-      white-space: nowrap;
-    }
-
-    .pc-desc {
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 1.7;
-      color: var(--text);
-      max-width: 100%;
-      margin: 0 1.5rem 0.5rem;
-      white-space: normal;
-    }
-
-    button.pc-cta { cursor: pointer; }
-
-    .pc-images {
+    .project-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 2px;
+      grid-template-columns: repeat(2, 1fr);
+      grid-auto-rows: 1fr;
+      gap: 22px;
       flex: 1;
       min-height: 0;
     }
-    .pc-images.landscape {
-      grid-template-columns: repeat(2, 1fr);
+
+    .project-tile {
+      background: var(--tile-color, var(--surface));
+      border-radius: 14px;
+      padding: 2rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 260px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.35s ease;
+      user-select: none;
     }
-    .pc-images img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border: none;
-      border-radius: 0;
+    /* Scene image behind the device */
+    .project-tile::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: var(--tile-bg, none) center / cover no-repeat;
+      filter: blur(3px);
+      transform: scale(1.08);
+    }
+    /* Scrim so the white name stays legible */
+    .project-tile::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(to top right, rgba(0,0,0,0.60) 0%, rgba(0,0,0,0.22) 48%, rgba(0,0,0,0) 72%);
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       CASE STUDY (card back)
-    ═══════════════════════════════════════════════════════════ */
-    .cs-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
+    /* 2×2 grid of four equal cards */
+
+    /* ── Logo marquee banner ── */
+    .logo-banner {
+      flex-shrink: 0;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
     }
-    .cs-label {
+    .logo-track {
+      display: flex;
+      gap: 18px;
+      width: max-content;
+      animation: logo-marquee 40s linear infinite;
+    }
+    @keyframes logo-marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .logo-pill {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      height: 88px;
+      min-width: 200px;
+      padding: 0 2.25rem;
+      background: var(--surface);
+      border-radius: 100px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .logo-pill .lp-mark {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      background: var(--border-2);
+      flex-shrink: 0;
+    }
+    .logo-pill .lp-word {
+      height: 15px;
+      width: 78px;
+      border-radius: 7px;
+      background: var(--border-2);
+    }
+    .logo-pill:nth-child(3n) .lp-word { width: 96px; }
+    .logo-pill:nth-child(4n) .lp-word { width: 62px; }
+
+    .project-tile:hover {
+      transform: scale(1.012);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.18);
+      z-index: 2;
+    }
+
+    .tile-year {
       font-family: var(--mono);
       font-size: 11px;
-      font-weight: 500;
       letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-3);
+      color: #fff;
+      opacity: 0.55;
+      display: block;
+      margin-bottom: 0.5rem;
     }
-    .cs-close {
+
+    .tile-year,
+    .tile-tags { display: none; }
+
+    .tile-name {
+      position: relative;
+      z-index: 2;
+      font-family: var(--sans);
+      font-size: clamp(30px, 4.2vw, 68px);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.02;
+      margin-bottom: 0;
+    }
+
+    .tile-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      color: #fff;
+      opacity: 0.8;
+      background: rgba(255,255,255,0.14);
+      border-radius: 100px;
+      padding: 0.2rem 0.65rem;
+    }
+
+    .tile-arrow {
+      position: absolute;
+      z-index: 3;
+      top: 1.25rem;
+      right: 1.25rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.14);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.3s cubic-bezier(0.16,1,0.3,1);
+    }
+    .project-tile:hover .tile-arrow {
+      background: rgba(255,255,255,0.25);
+      transform: translate(2px, -2px);
+    }
+    .tile-arrow svg { width: 15px; height: 15px; }
+
+    /* ═══════════════════════════════════════════════════════════
+       CASE STUDY OVERLAY
+    ═══════════════════════════════════════════════════════════ */
+    .cs-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 500;
+      background: var(--surface);
+      overflow-y: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .cs-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Morphing ghost — the expanding rectangle */
+    .cs-hero-morph {
+      position: fixed;
+      z-index: 600;
+      display: none;
+      overflow: hidden;
+      will-change: top, left, width, height, border-radius;
+    }
+
+    /* Back button, overlaid on the hero */
+    .cs-back {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      z-index: 5;
       font-family: var(--mono);
       font-size: 12px;
-      color: var(--text-2);
-      background: none;
-      border: 1px solid var(--border);
+      color: #fff;
+      background: rgba(0,0,0,0.28);
+      -webkit-backdrop-filter: blur(6px);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.28);
       border-radius: 100px;
-      padding: 0.35rem 1rem;
+      padding: 0.5rem 1.1rem;
       cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
     }
-    .cs-close:hover {
-      border-color: var(--text);
-      color: var(--text);
+    .cs-back:hover { background: rgba(0,0,0,0.45); }
+    .cs-back svg { width: 14px; height: 14px; }
+
+    .cs-hero {
+      position: relative;
+      width: 100%;
+      height: 30vh;
+      min-height: 220px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2.25rem 3rem;
+      overflow: hidden;
     }
-    .cs-title {
-      font-family: var(--serif);
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 1.25rem;
-    }
-    .cs-meta {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      padding-bottom: 1.25rem;
-      margin-bottom: 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .cs-meta-label {
-      display: block;
+    .cs-hero.morphing { visibility: hidden; }
+    .cs-hero-year {
       font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 500;
+      font-size: 12px;
       letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-bottom: 0.25rem;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 0.5rem;
     }
-    .cs-meta-value {
+    .cs-hero-title {
       font-family: var(--sans);
-      font-size: 13px;
-      font-weight: 400;
-      color: var(--text);
-    }
-    .cs-section {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.0;
       margin-bottom: 1.25rem;
+    }
+    .cs-hero-chips {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .cs-hero-chip {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.15);
+      border-radius: 100px;
+      padding: 0.25rem 0.75rem;
+    }
+
+    .cs-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    .cs-section {
+      margin-bottom: 2.5rem;
     }
     .cs-section h4 {
       font-family: var(--mono);
       font-size: 11px;
       font-weight: 500;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--text-2);
-      margin-bottom: 0.5rem;
+      color: var(--text-3);
+      margin-bottom: 0.75rem;
     }
     .cs-section p {
       font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.7;
-      color: var(--text-2);
-    }
-    .cs-impact {
-      list-style: none;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      margin-top: auto;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-    .cs-impact li {
-      font-family: var(--serif);
       font-size: 16px;
-      font-weight: 700;
+      font-weight: 300;
+      line-height: 1.85;
       color: var(--text);
     }
-    .cs-impact li span {
-      display: block;
-      font-family: var(--mono);
-      font-size: 10px;
-      font-weight: 400;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--text-3);
-      margin-top: 0.15rem;
+
+    .cs-img-placeholder {
+      width: 100%;
+      background: var(--bg-2);
+      border-radius: 12px;
+      margin-bottom: 2.5rem;
+      border: 1px solid var(--border);
+    }
+    .cs-img-placeholder.wide { aspect-ratio: 16/9; }
+    .cs-img-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       LOGOS SECTION
-    ═══════════════════════════════════════════════════════════ */
-    /* ── Contact panel layout ── */
-    .contact-panel > div {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 2rem;
-      min-height: calc(100vh - 6rem);
-    }
-
-    /* ── Logo footer marquee ── */
-    .logo-footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 0;
-      margin: 0 -2.5rem;
-      width: calc(100% + 5rem);
-    }
-    .marquee {
+    /* ── Angled phone mockups ── */
+    .phone-scene {
       position: relative;
       width: 100%;
-      overflow: hidden;
-      mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
-      -webkit-mask-image: linear-gradient(90deg, transparent, black 5%, black 95%, transparent);
-    }
-    .marquee-track {
+      border-radius: 16px;
+      margin-bottom: 2.5rem;
+      padding: 3.5rem 2rem;
       display: flex;
-      gap: 5rem;
-      width: max-content;
-      animation: marquee 45s linear infinite;
-    }
-    @keyframes marquee {
-      0%   { transform: translateX(0); }
-      100% { transform: translateX(-50%); }
-    }
-    .logo-item {
-      flex-shrink: 0;
-      display: flex;
+      gap: 2.5rem;
       align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
+      overflow: hidden;
+      perspective: 1500px;
+      background: var(--scene, var(--bg-2));
     }
-    .logo-item img {
-      height: 120px;
-      width: auto;
-      opacity: 1;
+    /* Blurred backdrop layer so the phone pops */
+    .phone-scene::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        var(--scene-img, none) center / cover no-repeat,
+        radial-gradient(120% 110% at 25% 12%, rgba(255,255,255,0.10), transparent 55%);
+      filter: blur(10px);
+      transform: scale(1.12);
+      z-index: 0;
+    }
+    .phone-scene.solo { padding: 4.75rem 2rem; }
+
+    /* ── Phone — straight-on, colored frame ── */
+    .phone {
+      position: relative;
+      z-index: 1;
+      width: clamp(168px, 20vw, 232px);
+      background-color: var(--frame, #0b0b0d);
+      background-image: linear-gradient(150deg, rgba(255,255,255,0.28), rgba(255,255,255,0) 32%, rgba(0,0,0,0.20));
+      border-radius: 34px;
+      padding: 5px;
+      box-shadow: 0 45px 80px -22px rgba(0,0,0,0.5), 0 12px 26px rgba(0,0,0,0.28);
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .phone-screen {
+      position: relative;
+      background: #000;
+      border-radius: 29px;
+      padding: 4px;
+      overflow: hidden;
+    }
+    .phone-screen::before {
+      content: "";
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30%;
+      height: 15px;
+      background: #000;
+      border-radius: 12px;
+      z-index: 2;
+    }
+    .phone-screen img {
+      width: 100%;
+      aspect-ratio: 9 / 19.5;
+      object-fit: cover;
+      border-radius: 25px;
+      display: block;
     }
 
-    /* ═══════════════════════════════════════════════════════════
-       CONTACT
-    ═══════════════════════════════════════════════════════════ */
-    .contact-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--r-lg);
-      padding: 2.5rem;
+    /* ── MacBook — straight-on ── */
+    .laptop {
+      position: relative;
+      z-index: 1;
+      width: clamp(320px, 46vw, 540px);
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
     }
-    .contact-heading {
-      font-family: var(--serif);
-      font-size: 26px;
-      font-weight: 700;
-      line-height: 1.25;
-      color: var(--text);
-      margin-bottom: 0.75rem;
+    .laptop-screen {
+      background-color: var(--frame, #c9ccce);
+      background-image: linear-gradient(150deg, rgba(255,255,255,0.22), rgba(255,255,255,0) 35%, rgba(0,0,0,0.14));
+      border-radius: 16px 16px 5px 5px;
+      padding: 11px 11px 13px;
+      box-shadow: 0 45px 80px -25px rgba(0,0,0,0.5), 0 12px 26px rgba(0,0,0,0.25);
     }
-    .contact-heading em {
-      font-style: italic;
-      color: var(--text);
+    .laptop-bezel {
+      position: relative;
+      background: #000;
+      border-radius: 6px;
+      padding: 9px;
     }
-    .contact-desc {
-      font-family: var(--sans);
-      font-size: 14px;
-      font-weight: 300;
-      line-height: 1.7;
-      color: var(--text-2);
-      margin-bottom: 1.25rem;
-      max-width: 50ch;
+    .laptop-bezel::before {
+      content: "";
+      position: absolute;
+      top: 4px; left: 50%;
+      transform: translateX(-50%);
+      width: 4px; height: 4px;
+      border-radius: 50%;
+      background: #1a1a1a;
     }
-    .contact-email {
-      display: inline-block;
-      font-family: var(--mono);
-      font-size: 14px;
-      color: var(--text);
-      margin-bottom: 1rem;
-      text-decoration: none;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 2px;
-      transition: border-color 0.2s;
+    .laptop-bezel img {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      object-fit: cover;
+      border-radius: 3px;
+      display: block;
     }
-    .contact-email:hover { border-color: var(--text); }
-    .contact-resume {
+    .laptop-base {
+      position: relative;
+      width: 116%;
+      margin-left: -8%;
+      height: 15px;
+      background: linear-gradient(180deg, #dfe2e5, #b7bbc0 55%, #8b8f94);
+      border-radius: 0 0 13px 13px;
+      box-shadow: 0 20px 34px -12px rgba(0,0,0,0.45);
+    }
+    .laptop-base::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 15%; height: 5px;
+      background: rgba(0,0,0,0.16);
+      border-radius: 0 0 7px 7px;
+    }
+
+    .phone:hover, .laptop:hover { transform: translateY(-8px); }
+
+    /* ── Pre-rendered device mockup image ── */
+    .device-mockup {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: clamp(215px, 25vw, 310px);
+      height: auto;
+      filter: drop-shadow(0 38px 46px rgba(0,0,0,0.5));
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .device-mockup:hover { transform: translateY(-8px); }
+
+    /* Flat framed screenshot (extra screens under the hero) */
+    .cs-shot {
+      position: relative;
+      z-index: 1;
+      width: clamp(150px, 18vw, 226px);
+      height: auto;
+      border-radius: 22px;
+      box-shadow: 0 32px 52px -18px rgba(0,0,0,0.5), 0 8px 18px rgba(0,0,0,0.28);
+      display: block;
+      transition: transform 0.5s cubic-bezier(0.16,1,0.3,1);
+    }
+    .cs-shot:hover { transform: translateY(-8px); }
+
+    /* ── Device preview on grid cards ── */
+    .tile-device {
+      position: absolute;
+      z-index: 1;
+      pointer-events: none;
+      transition: transform 0.4s cubic-bezier(0.16,1,0.3,1);
+    }
+    .tile-device.phone-device {
+      right: 6%;
+      bottom: -16%;
+    }
+    .tile-device.phone-device .phone {
+      width: clamp(140px, 13.5vw, 200px);
+      box-shadow: 0 30px 60px -18px rgba(0,0,0,0.55), 0 10px 20px rgba(0,0,0,0.3);
+    }
+    .tile-device.phone-device .device-mockup {
+      width: clamp(150px, 16vw, 232px);
+      filter: drop-shadow(0 26px 36px rgba(0,0,0,0.5));
+    }
+    .tile-device.laptop-device {
+      right: 4%;
+      top: 50%;
+      transform: translateY(-44%);
+    }
+    .tile-device.laptop-device .laptop {
+      width: clamp(240px, 27vw, 380px);
+    }
+    .project-tile:hover .tile-device.phone-device { transform: translateY(-14px); }
+    .project-tile:hover .tile-device.laptop-device { transform: translateY(-52%); }
+
+    .cs-ext-link {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       font-family: var(--mono);
-      font-size: 13px;
-      color: var(--text);
-      text-decoration: none;
-      background: none;
-      border: 1px solid var(--border);
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      color: #fff;
+      background: var(--accent);
+      border: 1px solid var(--accent);
       border-radius: 100px;
-      padding: 0.5rem 1.25rem;
-      transition: border-color 0.2s, background 0.2s;
+      padding: 0.65rem 1.5rem;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
     }
-    .contact-resume:hover {
-      border-color: var(--text);
-      background: var(--bg-2);
-    }
-    .contact-resume svg { width: 14px; height: 14px; }
-    .contact-footer {
-      font-family: var(--mono);
-      font-size: 11px;
-      color: var(--text-3);
-      margin-top: 2.5rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
-    }
+    .cs-ext-link:hover { background: #333; border-color: #333; }
+    .cs-ext-link svg { width: 13px; height: 13px; }
 
     /* ═══════════════════════════════════════════════════════════
        RESPONSIVE
     ═══════════════════════════════════════════════════════════ */
     @media (max-width: 900px) {
-      /* Disable entrance animations — scroll detection doesn't work on stacked layout */
-      .panel .pc-top,
-      .panel .pc-title,
-      .panel .pc-chips,
-      .panel .pc-desc,
-      .panel .contact-heading,
-      .panel .contact-desc,
-      .panel .contact-email,
-      .panel .contact-resume,
-      .panel .contact-footer {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-      }
-
       html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
-      .split {
-        flex-direction: column;
-        height: auto;
-        width: 100%;
-        overflow-x: hidden;
-      }
-      .sidebar {
-        width: 100%;
-        height: auto;
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-      }
-      .main {
-        width: 100%;
-        max-width: 100%;
-        height: auto;
-        overflow-y: visible;
-        overflow-x: hidden;
-        scroll-snap-type: none;
-      }
-      .panel {
-        height: auto;
-        min-height: auto;
-        width: 100%;
-        max-width: 100%;
-        scroll-snap-align: none;
-        padding: 1.5rem;
-        box-sizing: border-box;
-      }
-      .panel .project-card,
-      .panel .contact-card {
-        opacity: 1;
-        transform: none;
-      }
-      .sidebar-photo {
-        max-width: 120px;
-      }
+      .split { flex-direction: column; height: auto; width: 100%; overflow-x: hidden; }
+      .sidebar { width: 100%; height: auto; padding: 22px; }
+      .main { width: 100%; max-width: 100%; height: auto; overflow-y: visible; overflow-x: hidden; }
+      .project-grid { flex: none; }
+      .project-tile { min-height: 220px; }
       .sidebar-stats { flex-wrap: wrap; }
-      .pagination { display: none; }
+      .sidebar-copy { display: none; }
     }
     @media (max-width: 600px) {
-      .sidebar-top { padding: 1.5rem 1.25rem 0; }
-      .sidebar-bottom { display: none; }
+      .personal-card { padding: 1.75rem 1.5rem; }
       .mobile-footer { display: flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 1.5rem; border-top: 1px solid var(--border); color: var(--text-2); font-family: var(--mono); font-size: 12px; }
-      .panel { padding: 1rem; }
-      .pc-top { padding: 1rem 1.25rem 0; flex-wrap: wrap; gap: 0.5rem; }
-      .pc-num { width: 100%; }
-      .pc-top-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-      .pc-title { margin: 0.75rem 1.25rem 0.5rem; }
-      .pc-desc { margin: 0 1.25rem 0.5rem; max-width: 100%; white-space: normal; }
-      .pc-chips { margin: 0 1.25rem 1.25rem; }
-      .pc-images { grid-template-columns: 1fr; }
-      .pc-images.landscape { grid-template-columns: 1fr; }
+      .main { padding: 12px; gap: 12px; }
+      .project-grid { grid-template-columns: 1fr; gap: 12px; }
       .sidebar-stats { flex-direction: column; gap: 0.5rem; }
-      .contact-card { padding: 1.5rem; }
-      .project-card, .card-inner, .card-front { min-height: auto; width: 100%; max-width: 100%; overflow: hidden; }
-      .pc-images { flex: none; overflow: hidden; height: auto; }
-      .pc-images img { height: auto; width: 100%; object-fit: cover; }
+      .cs-hero { padding: 2rem 1.5rem; }
+      .cs-body { padding: 2rem 1.5rem 4rem; }
+      .cs-img-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -878,7 +741,7 @@
          SIDEBAR (1/3 — fixed)
     ══════════════════════════════════════════════════════════ -->
     <aside class="sidebar">
-      <div class="sidebar-top">
+      <div class="sidebar-card personal-card">
         <p class="sidebar-kicker">Senior Product Designer &middot; SLC, UT</p>
         <h1 class="sidebar-name">John Fabela</h1>
         <p class="sidebar-desc">
@@ -898,342 +761,91 @@
             <span class="sidebar-stat-label">Revenue</span>
           </div>
         </div>
-        <div class="sidebar-links">
-          <a href="mailto:johnwilliamfabela@gmail.com">
-            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</span>
-            <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
-          <a href="https://www.linkedin.com/in/john-fabela" target="_blank" rel="noopener">
-            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</span>
-            <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
-          <a href="resume.html" target="_blank">
-            <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Resume</span>
-            <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
-          </a>
-        </div>
       </div>
 
-      <div class="sidebar-bottom">
-        <div class="sidebar-copy" style="display:flex;align-items:center;gap:0.75rem;">
-          <img src="Website_Image/jf_logo.svg" alt="JF" style="width:28px;height:auto;opacity:0.6;" />
-          <span>&copy; <span id="yr"></span> John Fabela</span>
-        </div>
+      <div class="sidebar-card links-card">
+        <a href="mailto:johnwilliamfabela@gmail.com">
+          <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</span>
+          <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/john-fabela" target="_blank" rel="noopener">
+          <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>LinkedIn</span>
+          <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
+        <a href="resume.html" target="_blank">
+          <span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>Resume</span>
+          <svg class="link-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+        </a>
       </div>
     </aside>
 
-    <!-- ══════════════════════════════════════════════════════════
-         MAIN CONTENT (2/3 — scroll-snap panels)
-    ══════════════════════════════════════════════════════════ -->
-    <main class="main" id="main-scroll">
-      <!-- Panel 1: Instasize -->
-      <section class="panel is-visible" data-index="0" id="work" style="--p:1">
-        <div class="project-card">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="pc-top">
-                <span class="pc-num">2015</span>
-                <div style="display:flex;gap:0.4rem">
-                  <a href="https://apps.apple.com/us/app/instasize-ai-photo-editor/id576649830" class="pc-cta filled" target="_blank" rel="noopener">
-                    View App
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </a>
-                  <button class="pc-cta flip-btn">Case Study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/></svg></button>
-                </div>
-              </div>
-              <h3 class="pc-title">Instasize</h3>
-              <p class="pc-desc">A photo and video editing app downloaded by over 150 million users.</p>
-              <div class="pc-chips">
-                <span class="chip">iOS</span>
-                <span class="chip">Consumer</span>
-                <span class="chip">Subscription</span>
-              </div>
-              <div class="pc-images">
-                <img src="Website_Image/instasize1.png" alt="Instasize screenshot 1" loading="lazy" />
-                <img src="Website_Image/instasize2.png" alt="Instasize screenshot 2" loading="lazy" />
-                <img src="Website_Image/instasize3.png" alt="Instasize screenshot 3" loading="lazy" />
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="cs-header">
-                <span class="cs-label">Case Study</span>
-                <button class="cs-close flip-btn">Close</button>
-              </div>
-              <h3 class="cs-title">Instasize</h3>
-              <div class="cs-section">
-                <h4>Context</h4>
-                <p>Instasize started as a simple photo resizing tool and grew to 150M+ users. I led design for over 11 years, growing from the first designer to leading a team of five across iOS, Android, and web.</p>
-              </div>
-              <div class="cs-section">
-                <h4>The Problem</h4>
-                <p>The product needed to evolve into a full creative suite and subscription business without alienating the massive casual user base that loved it because it was simple. Later, we faced a second challenge: introducing generative AI capabilities into a product built entirely around fast, predictable manual editing.</p>
-              </div>
-              <div class="cs-section">
-                <h4>What I Did</h4>
-                <p>I redesigned the editing pipeline to support video alongside photo using a modular architecture that let us ship features independently per platform. I led the transition from free to subscription by redesigning onboarding to reduce time-to-value by 40% and creating a model that balanced free-tier engagement with premium conversion.</p>
-                <p style="margin-top:0.5rem;">When AI features came in (background removal, avatar creation, intelligent enhancement), I kept them opt-in and progressive. AI tools lived alongside manual controls, never replacing them. Users could explore generative features without losing access to the workflows they already trusted.</p>
-                <p style="margin-top:0.5rem;">The modular architecture also enabled the design and engineering teams to work in parallel across platforms, and I established shared interaction patterns and documentation that kept the growing team aligned as we scaled.</p>
-              </div>
-              <div class="cs-section">
-                <h4>Outcomes</h4>
-                <p>Drove $100M+ in cumulative revenue through the subscription transition. Shipped across iOS, Android, and web to 150M+ users. Reduced onboarding time-to-value by 40%. Introduced AI features with no measurable drop in core user retention.</p>
-              </div>
-              <!-- role removed -->
-              <div style="display:none;">
-                <p>Role: Head of Product Design, leading a team of 4 designers and partnering directly with the CEO and engineering leads.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+    <main class="main" id="main-grid">
+      <div class="project-grid">
 
-      <!-- Panel 2: Knool -->
-      <section class="panel" data-index="1">
-        <div class="project-card">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="pc-top">
-                <span class="pc-num">2025</span>
-                <div style="display:flex;gap:0.4rem">
-                  <a href="https://knool.ai" class="pc-cta filled" target="_blank" rel="noopener">
-                    View Website
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </a>
-                  <button class="pc-cta flip-btn">Case Study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/></svg></button>
-                </div>
-              </div>
-              <h3 class="pc-title">Knool</h3>
-              <p class="pc-desc">An AI-powered platform helping attorneys analyze and navigate complex case documents, grown to $500K ARR.</p>
-              <div class="pc-chips">
-                <span class="chip">AI</span>
-                <span class="chip">LegalTech</span>
-                <span class="chip">SaaS</span>
-              </div>
-              <div class="pc-images" style="grid-template-columns:1fr; align-items:flex-start; padding:1.5rem 2.5rem;">
-                <img src="Website_Image/knool.png" alt="Knool screenshot" loading="lazy" style="max-height:100%; max-width:100%; width:100%; object-fit:contain; border-radius:8px;" />
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="cs-header">
-                <span class="cs-label">Case Study</span>
-                <button class="cs-close flip-btn">Close</button>
-              </div>
-              <h3 class="cs-title">Knool</h3>
-              <div class="cs-section">
-                <h4>Context</h4>
-                <p>Knool is an AI-powered legal platform for litigation discovery. I joined as Founding Designer and shaped the product from concept to $500K ARR.</p>
-              </div>
-              <div class="cs-section">
-                <h4>The Problem</h4>
-                <p>Attorneys spend hundreds of hours manually reviewing case documents. AI could collapse that timeline, but the legal industry is deeply skeptical of AI output. Hallucinated case law has already led to sanctions. We had to earn trust with users trained to be adversarial toward every claim.</p>
-              </div>
-              <div class="cs-section">
-                <h4>What I Did</h4>
-                <p>I ran contextual inquiry sessions at law firms to map real workflows before designing anything. Every AI response is cited with exact source references from uploaded case documents so attorneys can verify before relying on anything. The AI is intentionally constrained to the four corners of uploaded evidence and will not speculate beyond it. I designed this boundary to be visible and understandable, not hidden behind a disclaimer.</p>
-                <p style="margin-top:0.5rem;">The fact-check feature surfaces both corroborating and contradicting evidence, not just confirming results. This was a deliberate choice: attorneys think adversarially, so the tool needed to match that mental model. I chose a conversational interface over traditional search because the target users are non-technical professionals who needed the lowest possible learning curve.</p>
-                <p style="margin-top:0.5rem;">I built a guided onboarding flow that established trust through transparency, showing the AI's reasoning and source material alongside every answer. The information architecture is optimized for legal document hierarchies and cross-reference patterns.</p>
-                <p style="margin-top:0.5rem;">I documented experience principles and interaction patterns for AI features so the team could build on consistent foundations as the product grew, rather than redesigning trust mechanisms for each new feature.</p>
-              </div>
-              <div class="cs-section">
-                <h4>Outcomes</h4>
-                <p>$0 to $500K ARR as a founding team member. Design and UX consistently cited as a favorite among users, especially those new to AI. Sole designer working directly with the CEO and engineering team.</p>
-              </div>
-              <!-- role removed -->
-              <div style="display:none;">
-                <p>Role: Founding Designer.</p>
-              </div>
-            </div>
-          </div>
+        <!-- Knool -->
+        <div class="project-tile" data-project="knool" style="--tile-color:#2d4a3e;">
+          <div class="tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+          <h2 class="tile-name">Knool</h2>
         </div>
-      </section>
 
-      <!-- Panel 3: Made Suite -->
-      <section class="panel" data-index="2">
-        <div class="project-card">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="pc-top">
-                <span class="pc-num">2016</span>
-                <div style="display:flex;gap:0.4rem">
-                  <a href="https://apps.apple.com/us/app-bundle/made-editing-kit-apps-for-photo-video/id1574564576" class="pc-cta filled" target="_blank" rel="noopener">
-                    View App
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </a>
-                  <button class="pc-cta flip-btn">Case Study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/></svg></button>
-                </div>
-              </div>
-              <h3 class="pc-title">Made Suite</h3>
-              <p class="pc-desc">A suite of creative apps for photo, video, and collage editing.</p>
-              <div class="pc-chips">
-                <span class="chip">iOS</span>
-                <span class="chip">Consumer</span>
-                <span class="chip">Subscription</span>
-              </div>
-              <div class="pc-images">
-                <img src="Website_Image/made1.png" alt="Made screenshot 1" loading="lazy" />
-                <img src="Website_Image/made2.png" alt="Made screenshot 2" loading="lazy" />
-                <img src="Website_Image/made3.png" alt="Made screenshot 3" loading="lazy" />
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="cs-header">
-                <span class="cs-label">Case Study</span>
-                <button class="cs-close flip-btn">Close</button>
-              </div>
-              <h3 class="cs-title">Made Suite</h3>
-              <div class="cs-section">
-                <h4>Context</h4>
-                <p>Made Suite is a family of three creative apps (Made, Videomade, and Selfiemade) built under the Instasize umbrella. Each app targeted a different creative workflow while sharing recognizable design DNA.</p>
-              </div>
-              <div class="cs-section">
-                <h4>The Problem</h4>
-                <p>We needed to give each app a distinct personality while maintaining a unified brand experience. Users might move between apps, and the transitions had to feel cohesive without making every app look the same.</p>
-              </div>
-              <div class="cs-section">
-                <h4>What I Did</h4>
-                <p>I developed a shared design system with flexible brand tokens that could adapt per app. I led brand workshops to define each app's unique character, then crafted a motion design language that carried across the suite so transitions and micro-interactions felt cohesive. I created a modular template system so content creators could start fast, used gesture-driven editing to minimize UI chrome, and kept the same core nav pattern across all three apps with distinct color palettes and iconography.</p>
-              </div>
-              <div class="cs-section">
-                <h4>Outcomes</h4>
-                <p>Launched three apps with a unified design system and distinct brand identities. Reduced design-to-development handoff time through shared component library. Consistent 4.7+ star ratings across all three apps.</p>
-              </div>
-              <!-- role removed -->
-              <div style="display:none;">
-                <p>Role: Head of Product Design, leading brand and product design across the suite.</p>
-              </div>
-            </div>
-          </div>
+        <!-- Instasize -->
+        <div class="project-tile" data-project="instasize" style="--tile-color:#b8875d;">
+          <div class="tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+          <h2 class="tile-name">Instasize</h2>
         </div>
-      </section>
 
-      <!-- Panel 4: PaperTrade -->
-      <section class="panel" data-index="3">
-        <div class="project-card">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="pc-top">
-                <span class="pc-num">2019</span>
-                <div style="display:flex;gap:0.4rem">
-                  <a href="https://apps.apple.com/us/app/papertrade-fantasy-stocks/id1569837685" class="pc-cta filled" target="_blank" rel="noopener">
-                    View App
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </a>
-                  <button class="pc-cta flip-btn">Case Study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/></svg></button>
-                </div>
-              </div>
-              <h3 class="pc-title">PaperTrade</h3>
-              <p class="pc-desc">A fantasy stock trading app that gamified investing with real-time data and daily contests.</p>
-              <div class="pc-chips">
-                <span class="chip">FinTech</span>
-                <span class="chip">Gamification</span>
-                <span class="chip">iOS</span>
-              </div>
-              <div class="pc-images">
-                <img src="Website_Image/papertrade1.png" alt="PaperTrade screenshot 1" loading="lazy" />
-                <img src="Website_Image/papertrade2.png" alt="PaperTrade screenshot 2" loading="lazy" />
-                <img src="Website_Image/papertrade3.png" alt="PaperTrade screenshot 3" loading="lazy" />
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="cs-header">
-                <span class="cs-label">Case Study</span>
-                <button class="cs-close flip-btn">Close</button>
-              </div>
-              <h3 class="cs-title">PaperTrade</h3>
-              <div class="cs-section">
-                <h4>Context</h4>
-                <p>PaperTrade is a simulated stock trading app designed to teach beginners market mechanics without risking real money.</p>
-              </div>
-              <div class="cs-section">
-                <h4>The Problem</h4>
-                <p>Stock trading apps intimidate beginners. We needed to make learning engaging enough to build a daily habit while keeping the experience grounded in how real markets work.</p>
-              </div>
-              <div class="cs-section">
-                <h4>What I Did</h4>
-                <p>I conducted user interviews with novice investors to understand their fears and motivations. I designed a gamified trading experience with daily contests, social leaderboards, and real-time market data. Rapid prototyping and usability testing helped us find the balance between fun and educational. I chose a dark UI to signal seriousness while using bold green accents to celebrate wins. I introduced a "Daily Contest" mechanic that created urgency and repeat engagement, and simplified chart interactions to three core gestures.</p>
-              </div>
-              <div class="cs-section">
-                <h4>Outcomes</h4>
-                <p>Simplified complex financial data into an interface beginners could use on day one. Designed a gamification system that balanced education with engagement. Validated core interaction patterns through rapid prototyping and usability testing.</p>
-              </div>
-              <!-- role removed -->
-              <div style="display:none;">
-                <p>Role: Lead Product Designer.</p>
-              </div>
-            </div>
-          </div>
+        <!-- Made Suite -->
+        <div class="project-tile" data-project="made" style="--tile-color:#7a6b58;">
+          <div class="tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+          <h2 class="tile-name">Made Suite</h2>
         </div>
-      </section>
 
-      <!-- Panel 5: Instasize Web -->
-      <section class="panel" data-index="4">
-        <div class="project-card">
-          <div class="card-inner">
-            <div class="card-front">
-              <div class="pc-top">
-                <span class="pc-num">2020</span>
-                <div style="display:flex;gap:0.4rem">
-                  <a href="https://instasize.com" class="pc-cta filled" target="_blank" rel="noopener">
-                    View Website
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-                  </a>
-                  <button class="pc-cta flip-btn">Case Study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6"/><path d="M21 13a9 9 0 1 1-3-7.7L21 8"/></svg></button>
-                </div>
-              </div>
-              <h3 class="pc-title">Instasize Web</h3>
-              <p class="pc-desc">An ecosystem of AI-powered creative tools built for the browser, expanding Instasize from a mobile app into a B2B platform.</p>
-              <div class="pc-chips">
-                <span class="chip">Web</span>
-                <span class="chip">AI Tools</span>
-                <span class="chip">B2B</span>
-              </div>
-              <div class="pc-images" style="grid-template-columns:1fr; align-items:flex-start; padding:1.5rem 2.5rem 2.5rem;">
-                <img src="Website_Image/instasize_web.png" alt="Instasize Web tools" loading="lazy" style="max-height:100%; max-width:100%; width:100%; object-fit:contain; border-radius:8px;" />
-              </div>
-            </div>
-            <div class="card-back">
-              <div class="cs-header">
-                <span class="cs-label">Case Study</span>
-                <button class="cs-close flip-btn">Close</button>
-              </div>
-              <h3 class="cs-title">Instasize Web</h3>
-              <div class="cs-section">
-                <h4>Context</h4>
-                <p>Instasize had 150M+ mobile downloads but the business was entirely consumer. We needed to expand into web by repackaging our core editing capabilities as browser-based tools for solo users and small businesses.</p>
-              </div>
-              <div class="cs-section">
-                <h4>The Problem</h4>
-                <p>We had to design an ecosystem of AI-powered tools that felt cohesive while serving a fundamentally different use case than the mobile app. Each tool had to work standalone for SEO and acquisition but also connect into a unified workspace for retained users.</p>
-              </div>
-              <div class="cs-section">
-                <h4>What I Did</h4>
-                <p>I led the design of individual AI-powered tools (background removal, image enhancement, smart cropping, batch resizing) that each solved a specific professional workflow. I designed each tool as a focused single-task interface rather than burying features inside a complex editor. This reduced onboarding friction for users who arrived from search with a specific job to do. I built progressive disclosure from individual tools into the full editor experience, and kept AI processing visible and controllable so users could trust the output for client-facing work.</p>
-                <p style="margin-top:0.5rem;">I designed sharing and export workflows that fit into existing team content pipelines, so the tools worked within how small businesses and solo creators already collaborate rather than forcing a new process.</p>
-              </div>
-              <div class="cs-section">
-                <h4>Outcomes</h4>
-                <p>Individual tools ranked on first page of search for target keywords. Strong adoption among solo creators and small business users. Successfully extended a mobile-first consumer product into a web-based tool ecosystem.</p>
-              </div>
-              <!-- role removed -->
-              <div style="display:none;">
-                <p>Role: Head of Product Design, leading the web product expansion.</p>
-              </div>
-            </div>
-          </div>
+        <!-- PaperTrade -->
+        <div class="project-tile" data-project="papertrade" style="--tile-color:#1e2d45;">
+          <div class="tile-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></div>
+          <h2 class="tile-name">PaperTrade</h2>
         </div>
-      </section>
 
-      <!-- Pagination dots -->
-      <nav class="pagination" id="pagination">
-        <button class="dot active" data-index="0" data-label="Instasize" aria-label="Go to Instasize"></button>
-        <button class="dot" data-index="1" data-label="Knool" aria-label="Go to Knool"></button>
-        <button class="dot" data-index="2" data-label="Made Suite" aria-label="Go to Made Suite"></button>
-        <button class="dot" data-index="3" data-label="PaperTrade" aria-label="Go to PaperTrade"></button>
-        <button class="dot" data-index="4" data-label="Instasize Web" aria-label="Go to Instasize Web"></button>
-      </nav>
+      </div>
+
+      <!-- Logo marquee banner -->
+      <div class="logo-banner">
+        <div class="logo-track">
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <!-- duplicate set for seamless loop -->
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+          <div class="logo-pill"><span class="lp-mark"></span><span class="lp-word"></span></div>
+        </div>
+      </div>
+
 
     </main>
   </div>
+
+  <!-- Case Study Overlay -->
+  <div class="cs-overlay" id="cs-overlay" aria-hidden="true">
+    <div class="cs-hero" id="cs-hero">
+      <button class="cs-back" id="cs-close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </button>
+      <div class="cs-hero-block" id="cs-hero-content"></div>
+    </div>
+    <div class="cs-body" id="cs-body"></div>
+  </div>
+  <!-- Ghost rectangle that morphs from tile → hero -->
+  <div class="cs-hero-morph" id="cs-hero-morph"></div>
+
+  <div class="cursor-dot" id="cursor"></div>
 
   <footer class="mobile-footer" style="display:none;">
     <img src="Website_Image/jf_logo.svg" alt="JF" style="width:24px;height:auto;opacity:0.5;" />
@@ -1241,107 +853,328 @@
   </footer>
 
   <script>
+    // ── Year ──
     const y = new Date().getFullYear();
-    document.getElementById('yr').textContent = y;
+    const yrEl = document.getElementById('yr');
+    if (yrEl) yrEl.textContent = y;
     document.querySelectorAll('.yr-mobile').forEach(el => el.textContent = y);
+
+    // ── Mobile footer ──
     const mobileFooter = document.querySelector('.mobile-footer');
     function toggleMobileFooter() {
-      mobileFooter.style.display = window.innerWidth <= 900 ? 'flex' : 'none';
+      if (mobileFooter) mobileFooter.style.display = window.innerWidth <= 900 ? 'flex' : 'none';
     }
     toggleMobileFooter();
     window.addEventListener('resize', toggleMobileFooter);
 
-    // Always start at top on load
+    // ── Always start at top ──
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.scrollTo(0, 0);
 
-    // Elements
-    const main = document.getElementById('main-scroll');
-    const panels = [...document.querySelectorAll('.panel')];
-    const dots = [...document.querySelectorAll('.dot')];
-    let ticking = false;
-    let activeIndex = 0;
-
-    // ── Scroll-driven animation engine ──
-    function updatePanels() {
-      const vh = main.clientHeight;
-      const mainTop = main.getBoundingClientRect().top;
-
-      panels.forEach((panel, i) => {
-        const rect = panel.getBoundingClientRect();
-        const relTop = rect.top - mainTop;
-
-        // Tent function: p peaks at 1 when panel is snapped, falls to 0 in both directions
-        const raw = 1 - Math.abs(relTop) / vh;
-        const p = Math.max(0, Math.min(1, raw));
-
-        // Set CSS custom property for scroll-driven transforms
-        panel.style.setProperty('--p', p.toFixed(3));
-
-        // Trigger stagger animations when panel is sufficiently visible
-        if (p > 0.35) {
-          panel.classList.add('is-visible');
-        } else {
-          panel.classList.remove('is-visible');
-        }
-
-        // Image parallax: shift images based on how centered the panel is
-        const images = panel.querySelector('.pc-images');
-        if (images) {
-          const offset = (1 - p) * 30; // 30px parallax range
-          images.style.setProperty('--img-shift', offset.toFixed(1));
-        }
-
+    // ── Custom cursor ──
+    const cursor = document.getElementById('cursor');
+    if (cursor && window.matchMedia('(hover: hover)').matches) {
+      document.addEventListener('mousemove', e => {
+        cursor.style.left = e.clientX + 'px';
+        cursor.style.top = e.clientY + 'px';
       });
-
-      // Update pagination based on scroll position
-      const scrollPos = main.scrollTop;
-      const panelHeight = panels[0].offsetHeight;
-      activeIndex = Math.min(Math.round(scrollPos / panelHeight), panels.length - 1);
-      dots.forEach((d, i) => {
-        d.classList.toggle('active', i === activeIndex);
+      function bindCursorExpand() {
+        document.querySelectorAll('a, button, .project-tile, .cs-back, .cs-ext-link').forEach(el => {
+          el.addEventListener('mouseenter', () => cursor.classList.add('expanded'));
+          el.addEventListener('mouseleave', () => cursor.classList.remove('expanded'));
+        });
+      }
+      bindCursorExpand();
+      document.querySelectorAll('.sidebar-card').forEach(card => {
+        card.addEventListener('mouseenter', () => cursor.classList.add('on-dark'));
+        card.addEventListener('mouseleave', () => cursor.classList.remove('on-dark'));
       });
     }
 
-    main.addEventListener('scroll', () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          updatePanels();
-          ticking = false;
-        });
-        ticking = true;
+    // ── Project data ──
+    const projects = {
+      instasize: {
+        title: 'Instasize', year: '2015', color: '#b8875d',
+        device: 'phone', frame: '#d2d4d6', mockup: 'mockup-instasize.png',
+        screens: ['mockup-instasize.png', 'instasize1.png', 'insta-paywall.jpg', 'insta-aieffects.jpg', 'insta-generate.jpg'],
+        link: 'https://apps.apple.com/us/app/instasize-ai-photo-editor/id576649830',
+        linkText: 'View App',
+        chips: ['iOS', 'Consumer', 'Subscription'],
+        sections: [
+          { label: 'Context', text: 'Instasize started as a simple photo-resizing tool and grew into a creative suite used by 150M+ people. I led design for over eleven years, from the first and only designer to a team of five across iOS, Android, and web. This is its second act: designing generative AI into a beloved creative tool that had stopped growing, a bet that is still in flight.' },
+          { label: 'The Starting Point', text: 'Like every mature app, growth had plateaued and begun to slip. The job was not to celebrate the scale we had built. It was to design a second act without breaking the thing 150M people already loved.' },
+          { label: 'Built on Restraint', text: 'For thirteen years we stayed deliberately picky and refused to bloat the app. Two tabs, one core flow. Resizing is the literal front door, step one, because it is what people actually came for. That restraint was the asset I had to protect while adding anything new.' },
+          { label: 'The Monetization Principle', text: 'Never gate the aha, gate the more. The full edit is free, start to finish; the ask appears at the moment of intent, right when someone reaches for the premium thing, never on launch and never blocking the core win. Behind it sat one paywall with a tested ladder: lead with the anchor price, and on a no, a lower tier appears as a recovery offer instead of letting the user walk. Every rung was A/B tested. I designed the flow and the screens; pricing itself was a team call.' },
+          { label: 'Adding AI', text: 'The first moves added AI to what we already knew: AI background removal, one-tap enhance, real upgrades to the core experience. But the growth curve barely noticed. Incremental was not going to be the answer.' },
+          { label: 'The Big Swing', text: 'So we built a second product inside the first. AI Effects is a generative studio living in its own tab, deliberately walled off so it never clutters the editor people came for, expansion without polluting the core. The generative surface behaves like an editor, not a slot machine: pick an effect, then keep going by typing what you want to change, with a projects history that holds every creation.' },
+          { label: 'A New Economy', text: 'The new product needed its own economics. A credit model, credits that never expire, sitting behind three anchored tiers, built to let curiosity convert into spend before anyone has to commit to a plan, a different motion than the editor’s straight paywall.' },
+          { label: 'The Honest Part', text: 'The verdict is not in, and that is the point. This is a bet still in flight, and how a designer thinks mid-decision tells you more than a tidy outcome. What I am watching is whether a walled-off generative product can grow without eroding the simple, trusted core that made Instasize worth 150M downloads in the first place.' },
+          { label: 'Learnings', text: 'The hardest problem was not the AI, it was adding it to a tool people already love without breaking what they love. Protect the core job. Gate the more, never the aha. And when something new does not fit the existing surface, give it its own room rather than forcing it into the one that already works.' },
+        ]
+      },
+      knool: {
+        title: 'Knool', year: '2024', color: '#2d4a3e',
+        device: 'laptop', frame: '#c9ccce',
+        screens: ['knool-assessment.png', 'knool-analysis.png', 'knool-heatmap.png', 'knool-documents.png', 'knool-penalties.png', 'knool-memo.png'],
+        link: 'https://knool.ai',
+        linkText: 'View Website',
+        chips: ['AI', 'LegalTech', 'SaaS'],
+        sections: [
+          { label: 'Context', text: 'Knool is litigation intelligence for wage-and-hour damages, designed for speed and clarity in an underserved market. I am the founding designer, building the product end to end for plaintiff-side employment attorneys.' },
+          { label: 'The Opportunity', text: 'Attorneys rely on outside experts for damages modeling. Those experts charge thousands, take weeks to months, and offer little transparency into the numbers. The workflow is slow, expensive, and opaque, an underserved need the larger legal-tech players are not focused on.' },
+          { label: 'Three Products, One System', text: 'Knool is three products in one cohesive experience. Case Assessment is a rapid exposure analysis at a $50 entry point. Case Analysis is deep damages modeling for committed cases. Mediation Intelligence is the strategy layer beyond the numbers. Each is built on one design system so the experience stays coherent as depth increases.' },
+          { label: 'Case Assessment', text: 'The entry point has one job: earn trust fast. Attorneys upload documents, Knool analyzes wage violations and returns an exposure estimate with clear visualizations in minutes. A low-friction sequence keeps momentum; every removed step protects the moment of first value.' },
+          { label: 'Case Analysis', text: 'Where depth lives. Once committed, attorneys move into full damages modeling, document parsing, claim validation, and visualization, each at the same level of polish. The assistant turns the analysis into attorney-ready output, an executive summary with a clear exposure snapshot sourced directly from the underlying tables, so strategy and drafting sit on top of the numbers, not apart from them.' },
+          { label: 'Restraint in Service of Clarity', text: 'The design language is monochrome and typography-forward, with interactive data visualization as the primary communication tool, not decoration. Attorneys are comparing Knool to experts who hand back dense spreadsheets weeks later; when damages are legible at a glance, the analysis defends itself in mediation.' },
+          { label: 'Decisions Rooted in Workflow', text: 'Structure follows how attorneys actually work. Mediation Intelligence sits downstream of assessment and analysis because attorneys reach for strategy only after they trust the numbers, so it enters the moment its input, a credible exposure figure, already exists. Assessment is friction-light because its job is to convert skeptics before asking for deeper commitment.' },
+          { label: 'Built for Speed and Scale', text: 'The design language is encoded as a build specification, a single source of truth that Claude Code builds against. New surfaces ship in one coherent language whether I design each screen directly or not; the system carries the judgment, so velocity never costs consistency.' },
+          { label: 'Adjacent Verticals', text: 'Wage-and-hour is the beachhead, but the system extends without rebuilding, into discrimination, retaliation, and misclassification. The core problem generalizes: turning messy qualitative and quantitative inputs into a view people trust enough to act on.' },
+          { label: 'Learnings', text: 'In a crowded market, speed and clarity win. Knool competes on experience and velocity, not feature count. Design is the competitive advantage, and the discipline is restraint: earn trust before asking for commitment, and make the analysis legible enough that it argues for itself.' },
+        ]
+      },
+      made: {
+        title: 'Made', year: '2016', color: '#7a6b58',
+        device: 'phone', frame: '#d1621c', mockup: 'mockup-made.png',
+        screens: ['mockup-made.png', 'made-templates.png', 'made-editor.png', 'made-filters.png', 'made-showcase.png', 'made-appstore.png'],
+        link: 'https://apps.apple.com/us/app-bundle/made-editing-kit-apps-for-photo-video/id1574564576',
+        linkText: 'View App',
+        chips: ['iOS', 'Consumer', 'Subscription'],
+        sections: [
+          { label: 'Context', text: 'Made was a consumer creative app I led end to end inside Instasize, the photo app I helped grow to 150M+ users. It was the first product I led entirely on my own: the naming, the concept, the design system, the editor, the template marketplace, and the App Store presence, while managing a team of three designers. Positioned as Instasize\'s lighter sister app, Made let non-designers turn photos into polished, design-forward Instagram Stories from a library of curated templates. The heavy photo editing lived in Instasize; Made stayed deliberately lightweight, built around templates rather than tools.' },
+          { label: 'The Opportunity', text: 'Instagram Stories had exploded to over 500M created every day, and inside Instasize it was already the second most-used format, behind only square. We were not chasing a trend from the outside, we already knew the editing space and the people in it, so we moved from a position of real advantage. The goal was simple to state and hard to earn: professional-looking results in seconds, with no design skills required.' },
+          { label: 'The Problem', text: 'Making a genuinely design-forward Story was still out of reach for most people. Instagram\'s native tools were basic, and the third-party apps trying to fill the gap were either too complex for casual users or too shallow to produce anything that looked truly designed. The format had won; the tooling that would make it feel effortless had not caught up.' },
+          { label: 'The Constraints', text: 'Three constraints shaped every decision, and they were less obstacles than the conditions that forced better ones. First, Made had to work as a sub-brand of Instasize, honoring the parent brand while carving out its own distinct space. Second, it was built for people with no design training and no patience for complexity, which meant hiding real sophistication behind a simple surface. Third, freemium was a first-class concern from day one, because where you draw the line between free and paid is a product design problem, not just a pricing one.' },
+          { label: 'Branding', text: 'The name Made was deliberate, a past-tense verb. You made something; the product delivers finished output, and that emotional payoff, the pride of creation, was what we designed toward. The tagline, Made on Made, leaned into it. The icon was a free-flowing M with an Instagram-adjacent gradient, tuned to feel alive and creative rather than corporate.' },
+          { label: 'The Editor', text: 'The core bet was template-first over a blank canvas, the single biggest product decision and the one I defended hardest. A blank canvas is freedom, but for a non-designer it is also decision fatigue and mediocre output; starting inside a template produced higher-quality results with far less effort. Free-form was available, but it was never the default. To protect that clarity I kept the editor deliberately lightweight, adding only what we had seen succeed and refusing to bloat it with options. Heavy editing stayed in Instasize; Made was the lighter sister app, and the templates, not the tools, were the point.' },
+          { label: 'The Template System', text: 'Templates were organized into editorial collections, 23 of them spanning 184 templates, each with a distinct visual identity. The filters were curated rather than exhaustive: we pulled the top-performing presets from Instasize, the ones our users already knew and reached for, and named them (Coast, Tiki, Oak, Tokyo, Bark) so each name did cognitive work before the tap. Freemium gating was built directly into the collection architecture, 74 templates free on download and the remaining 110 unlocked through subscription. The gate had to feel generous, not punishing, which made it a design decision as much as a business one.' },
+          { label: 'Research', text: 'Before we committed, we put the templates in front of real users. Across several small, in-person sessions, people worked with early templates and told us what landed and what felt off. That qualitative feedback, paired with behavioral data from 150M Instasize users, is what the design decisions were built on, not instinct alone.' },
+          { label: 'Social Impact', text: 'Templates are not neutral, so we used them for more than growth. We partnered with mental-health and suicide-awareness organizations to design template sets people could use to share support and resources, and we shipped a dedicated Pride Month collection to make space for the community our users belonged to.' },
+          { label: 'Outcomes', text: 'Made reached 4.7 stars across 12,000+ App Store ratings, which points to roughly a million downloads, spanning 23 collections and 184 templates. We were not first in the category, but we were one of the first movers, and what set Made apart was how simple and easy it was to use, paired with a large existing Instasize base we could direct toward it. The business was commercially mixed, but the product clearly resonated: the lightweight, template-first approach kept output quality high while keeping the experience simple.' },
+          { label: 'Learnings', text: 'Curation requires conviction, because there is always pressure to add more, broaden the surface, and accommodate every use case; holding an editorial point of view under that pressure is a leadership skill, not just a design preference. Freemium gating is a design problem, not a pricing one, where you draw the line between free and paid changes the entire experience. And leading designers is different from being one: the job becomes getting the best work out of each person while making sure every voice is heard.' },
+        ]
+      },
+      papertrade: {
+        title: 'PaperTrade', year: '2019', color: '#1e2d45',
+        device: 'phone', frame: '#31405f', mockup: 'mockup-papertrade.png',
+        screens: ['papertrade1.png', 'papertrade2.png', 'papertrade3.png'],
+        link: 'https://apps.apple.com/us/app/papertrade-fantasy-stocks/id1569837685',
+        linkText: 'View App',
+        chips: ['FinTech', 'Gamification', 'iOS'],
+        sections: [
+          { label: 'Context', text: 'PaperTrade is a simulated stock trading app designed to teach beginners market mechanics without risking real money.' },
+          { label: 'The Problem', text: 'Stock trading apps intimidate beginners. We needed to make learning engaging enough to build a daily habit while keeping the experience grounded in how real markets work.' },
+          { label: 'What I Did', text: 'I conducted user interviews with novice investors to understand their fears and motivations. I designed a gamified trading experience with daily contests, social leaderboards, and real-time market data. I chose a dark UI to signal seriousness while using bold green accents to celebrate wins. I introduced a "Daily Contest" mechanic that created urgency and repeat engagement, and simplified chart interactions to three core gestures.' },
+          { label: 'Outcomes', text: 'Simplified complex financial data into an interface beginners could use on day one. Designed a gamification system that balanced education with engagement. Validated core interaction patterns through rapid prototyping and usability testing.' },
+        ]
+      },
+    };
+
+    // ── Case study content builders ──
+    function heroInner(p) {
+      const chips = p.chips.map(c => `<span class="cs-hero-chip">${c}</span>`).join('');
+      return `<span class="cs-hero-year">${p.year}</span>`
+           + `<h2 class="cs-hero-title">${p.title}</h2>`
+           + `<div class="cs-hero-chips">${chips}</div>`;
+    }
+    function deviceEl(p, src) {
+      // Pre-rendered mockup image (phone with screenshot already inside)
+      if (p.mockup) {
+        return `<img class="device-mockup" src="Website_Image/${p.mockup}" alt="${p.title}" loading="lazy">`;
+      }
+      if (p.device === 'laptop') {
+        return `<div class="laptop" style="--frame:${p.frame}">
+          <div class="laptop-screen"><div class="laptop-bezel"><img src="Website_Image/${src}" alt="" loading="lazy"></div></div>
+          <div class="laptop-base"></div>
+        </div>`;
+      }
+      return `<div class="phone" style="--frame:${p.frame || '#0b0b0d'}">
+        <div class="phone-screen"><img src="Website_Image/${src}" alt="" loading="lazy"></div>
+      </div>`;
+    }
+    function scene(p, key, screens, cls) {
+      if (!screens.length) return '';
+      const devices = screens.map(s => deviceEl(p, s)).join('');
+      const style = `--scene:${p.color}; --scene-img:url('Website_Image/bg-${key}.jpg')`;
+      return `<div class="phone-scene ${cls}" style="${style}">${devices}</div>`;
+    }
+    function galleryScene(p, key, shots) {
+      if (!shots.length) return '';
+      const imgs = shots.map(s => `<img class="cs-shot" src="Website_Image/${s}" alt="" loading="lazy">`).join('');
+      const style = `--scene:${p.color}; --scene-img:url('Website_Image/bg-${key}.jpg')`;
+      return `<div class="phone-scene row" style="${style}">${imgs}</div>`;
+    }
+    function bodyInner(p, key) {
+      const screens = p.screens || [];
+      const first = p.sections.slice(0, 1).map(s =>
+        `<div class="cs-section"><h4>${s.label}</h4><p>${s.text}</p></div>`).join('');
+      const rest = p.sections.slice(1).map(s =>
+        `<div class="cs-section"><h4>${s.label}</h4><p>${s.text}</p></div>`).join('');
+      const link = p.link ? `<a href="${p.link}" target="_blank" rel="noopener" class="cs-ext-link">
+          ${p.linkText}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+        </a>` : '';
+      const heroScene = scene(p, key, screens.slice(0, 1), 'solo');
+      // Mockup projects: hero is the mockup, extra screenshots shown flat below.
+      // Non-mockup projects: extra screens shown as CSS devices.
+      const rowScene = p.mockup
+        ? galleryScene(p, key, screens.slice(1))
+        : scene(p, key, screens.slice(1), 'row');
+      return `
+        ${heroScene}
+        ${first}
+        ${rowScene}
+        ${rest}
+        ${link}
+      `;
+    }
+
+    // ── Overlay refs + morph animation ──
+    const overlay = document.getElementById('cs-overlay');
+    const csHero = document.getElementById('cs-hero');
+    const csHeroContent = document.getElementById('cs-hero-content');
+    const csBody = document.getElementById('cs-body');
+    const morph = document.getElementById('cs-hero-morph');
+    let storedRect = null, storedColor = null, animating = false;
+
+    const OPEN_EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+    const CLOSE_EASE = 'cubic-bezier(0.5, 0, 0.75, 0)';
+
+    function openProject(tile) {
+      if (animating) return;
+      const key = tile.dataset.project;
+      const p = projects[key];
+      if (!p) return;
+      const rect = tile.getBoundingClientRect();
+      storedRect = rect;
+      storedColor = p.color;
+
+      csHero.style.background = p.color;
+      csHeroContent.innerHTML = heroInner(p);
+      csBody.innerHTML = bodyInner(p, key);
+
+      overlay.scrollTop = 0;
+      csHero.classList.add('morphing');            // hide real hero during morph
+      csBody.style.transition = 'none';
+      csBody.style.opacity = '0';
+      csBody.style.transform = 'translateY(28px)';
+
+      overlay.style.transition = '';               // use CSS opacity fade
+      overlay.classList.add('open');
+      overlay.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+
+      overlay.offsetHeight;                         // reflow
+      const heroH = csHero.getBoundingClientRect().height;
+
+      // FLIP: ghost sits at final hero geometry, inverted via transform to look like the tile
+      const vw = window.innerWidth;
+      const sx = rect.width / vw;
+      const sy = rect.height / heroH;
+      morph.style.transition = 'none';
+      morph.style.display = 'block';
+      morph.style.background = p.color;
+      morph.style.top = '0';
+      morph.style.left = '0';
+      morph.style.width = '100vw';
+      morph.style.height = heroH + 'px';
+      morph.style.transformOrigin = 'top left';
+      morph.style.willChange = 'transform, border-radius';
+      morph.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(${sx}, ${sy})`;
+      morph.style.borderRadius = '14px';
+
+      morph.offsetHeight;                           // reflow
+      animating = true;
+      const dur = '0.62s';
+      morph.style.transition = `transform ${dur} ${OPEN_EASE}, border-radius ${dur} ${OPEN_EASE}`;
+      morph.style.transform = 'translate(0px, 0px) scale(1, 1)';
+      morph.style.borderRadius = '0px';
+
+      requestAnimationFrame(() => {
+        csBody.style.transition = 'opacity 0.5s ease 0.28s, transform 0.55s cubic-bezier(0.16,1,0.3,1) 0.28s';
+        csBody.style.opacity = '1';
+        csBody.style.transform = 'none';
+      });
+
+      const done = (e) => {
+        if (e.propertyName !== 'transform') return;
+        morph.removeEventListener('transitionend', done);
+        csHero.classList.remove('morphing');        // reveal real hero (identical to ghost)
+        morph.style.display = 'none';
+        animating = false;
+      };
+      morph.addEventListener('transitionend', done);
+
+      if (cursor) bindCursorExpand();
+    }
+
+    function closeProject() {
+      if (!storedRect || animating) return;
+      const rect = storedRect;
+      const heroH = csHero.getBoundingClientRect().height;
+
+      csHero.classList.add('morphing');
+      const vw = window.innerWidth;
+      const sx = rect.width / vw;
+      const sy = rect.height / heroH;
+      morph.style.transition = 'none';
+      morph.style.display = 'block';
+      morph.style.background = storedColor;
+      morph.style.top = '0';
+      morph.style.left = '0';
+      morph.style.width = '100vw';
+      morph.style.height = heroH + 'px';
+      morph.style.transformOrigin = 'top left';
+      morph.style.willChange = 'transform, border-radius';
+      morph.style.transform = 'translate(0px, 0px) scale(1, 1)';
+      morph.style.borderRadius = '0px';
+
+      morph.offsetHeight;                           // reflow
+      animating = true;
+      const dur = '0.5s';
+      morph.style.transition = `transform ${dur} ${CLOSE_EASE}, border-radius ${dur} ${CLOSE_EASE}`;
+      morph.style.transform = `translate(${rect.left}px, ${rect.top}px) scale(${sx}, ${sy})`;
+      morph.style.borderRadius = '14px';
+
+      csBody.style.transition = 'opacity 0.22s ease';
+      csBody.style.opacity = '0';
+      overlay.style.transition = 'opacity 0.4s ease 0.12s';
+      overlay.classList.remove('open');
+
+      const done = (e) => {
+        if (e.propertyName !== 'transform') return;
+        morph.removeEventListener('transitionend', done);
+        morph.style.display = 'none';
+        overlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        csHero.classList.remove('morphing');
+        storedRect = null;
+        animating = false;
+      };
+      morph.addEventListener('transitionend', done);
+    }
+
+    // ── Scene background + device preview on each grid card ──
+    document.querySelectorAll('.project-tile').forEach(tile => {
+      const key = tile.dataset.project;
+      const p = projects[key];
+      if (!p) return;
+      tile.style.setProperty('--tile-bg', `url('Website_Image/bg-${key}.jpg')`);
+      if (p.screens && p.screens.length) {
+        const wrap = document.createElement('div');
+        wrap.className = 'tile-device ' + (p.device === 'laptop' ? 'laptop-device' : 'phone-device');
+        wrap.innerHTML = deviceEl(p, p.screens[0]);
+        tile.appendChild(wrap);
       }
     });
 
-    // Also catch the final snap position
-    main.addEventListener('scrollend', updatePanels);
-
-    // Initial update
-    updatePanels();
-
-    // ── Dot click → scroll to panel ──
-    dots.forEach((dot, i) => {
-      dot.addEventListener('click', () => {
-        panels[i].scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
+    document.querySelectorAll('.project-tile').forEach(tile => {
+      tile.addEventListener('click', () => openProject(tile));
     });
 
-    // ── Sidebar nav → scroll inside .main ──
-    document.querySelectorAll('[data-nav]').forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const target = document.querySelector(link.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      });
-    });
+    document.getElementById('cs-close').addEventListener('click', closeProject);
 
-    // ── Card flip ──
-    document.querySelectorAll('.flip-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const card = btn.closest('.project-card');
-        card.classList.toggle('is-flipped');
-      });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closeProject();
     });
 
   </script>
